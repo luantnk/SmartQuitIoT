@@ -74,6 +74,7 @@ The solution consists of two main interfaces backed by a robust backend:
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
+
 ### Backend (Core Service)
 ![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.5.6-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
@@ -251,20 +252,20 @@ The solution consists of two main interfaces backed by a robust backend:
 
 #### Automated Workflows
 **Java Backend Pipeline:**
-- ✅ Maven build and compilation
-- ✅ JUnit unit tests with Surefire reports
-- ✅ Docker image build and push to GHCR
-- ✅ Semantic versioning with Git tags
-- ✅ Automated deployment to VPS
+- Maven build and compilation
+- JUnit unit tests with Surefire reports
+- Docker image build and push to GHCR
+- Semantic versioning with Git tags
+- Automated deployment to VPS
 
 **Python AI Service Pipeline:**
-- ✅ Dependency installation with pip caching
-- ✅ Black code formatting validation
-- ✅ Pytest unit test execution
-- ✅ System dependency installation (OpenCV, ML libs)
-- ✅ Docker multi-stage build optimization
-- ✅ Trivy security vulnerability scanning
-- ✅ Discord notifications for build status
+- Dependency installation with pip caching
+- Black code formatting validation
+- Pytest unit test execution
+- System dependency installation (OpenCV, ML libs)
+- Docker multi-stage build optimization
+- Trivy security vulnerability scanning
+- Discord notifications for build status
 
 **Security & Maintenance:**
 - Weekly CodeQL static analysis
