@@ -183,12 +183,12 @@ services:
       - "8000:8000"
     environment:
       - TZ=Asia/Ho_Chi_Minh
-      - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
+      - DB_HOST=mariadb
+      - DB_PORT=3306
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASS}
       - DB_NAME=smartquitiot
+      - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
     volumes:
       - ai_model_cache:/root/.cache/huggingface
     networks:

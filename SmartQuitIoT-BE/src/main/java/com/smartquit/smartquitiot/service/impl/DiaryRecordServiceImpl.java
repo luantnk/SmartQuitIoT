@@ -1,8 +1,7 @@
 package com.smartquit.smartquitiot.service.impl;
 
-import com.smartquit.smartquitiot.dto.request.AddAchievementRequest;
-import com.smartquit.smartquitiot.dto.request.DiaryRecordRequest;
-import com.smartquit.smartquitiot.dto.request.DiaryRecordUpdateRequest;
+import com.smartquit.smartquitiot.client.AiServiceClient;
+import com.smartquit.smartquitiot.dto.request.*;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
 import com.smartquit.smartquitiot.dto.response.GlobalResponse;
 import com.smartquit.smartquitiot.entity.*;
@@ -29,6 +28,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,8 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
     private final MetricRepository metricRepository;
     private final QuitPlanRepository quitPlanRepository;
     private final HealthRecoveryRepository healthRecoveryRepository;
+    private final MemberRepository memberRepository;
+    private final AiServiceClient aiServiceClient;
 
     private final int PULSE_RATE_TO_NORMAL = 20; //minutes
     private final int OXYGEN_LEVEL_TO_NORMAL = 480; //minutes => 8 hours
@@ -699,4 +702,61 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
         metricRepository.save(metric);
         return diaryRecordMapper.toDiaryRecordDTO(record);
     }
+
+    @Override
+    public Object getWeeklySummaryFromAI(int memberId) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(6);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with id: " + memberId));
+        List<DiaryRecord> records = diaryRecordRepository.findByMemberIdAndDateBetweenOrderByDateAsc(
+                memberId, startDate, endDate
+        );
+
+        log.info("Found {} diary records for Member {} between {} and {}",
+                records.size(), memberId, startDate, endDate);
+
+        if (records.isEmpty()) {
+            return "{\"error\": \"No diary records found in the last 7 days for this member.\"}";
+        }
+
+        List<AIDailyLog> aiLogs = records.stream().map(record -> AIDailyLog.builder()
+                .id(record.getId())
+                .date(record.getDate().toString())
+                .haveSmoked(record.isHaveSmoked() ? 1 : 0)
+                .cigarettesSmoked(record.getCigarettesSmoked())
+                .estimatedNicotineIntake(record.getEstimatedNicotineIntake() != null ? record.getEstimatedNicotineIntake().doubleValue() : 0.0)
+                .moodLevel(record.getMoodLevel())
+                .anxietyLevel(record.getAnxietyLevel())
+                .cravingLevel(record.getCravingLevel())
+                .confidenceLevel(record.getConfidenceLevel())
+                .isConnectIoTDevice(record.isConnectIoTDevice() ? 1 : 0)
+                .heartRate((double) record.getHeartRate())
+                .spo2((double) record.getSpo2())
+                .steps(record.getSteps())
+                .sleepDuration(record.getSleepDuration())
+                .isUseNrt(record.isUseNrt() ? 1 : 0)
+                .moneySpentOnNrt(record.getMoneySpentOnNrt())
+                .reductionPercentage(record.getReductionPercentage())
+                .triggers(record.getTriggers())
+                .note(record.getNote())
+                .build()
+        ).toList();
+
+        AISummaryRequest request = AISummaryRequest.builder()
+                .memberName(member.getFirstName() + " " + member.getLastName())
+                .logs(aiLogs)
+                .build();
+
+        try {
+            log.info("Sending weekly data to AI Service for member: {}", member.getId());
+            return aiServiceClient.getWeeklySummary(request);
+        } catch (Exception e) {
+            log.error("Error calling AI service", e);
+            throw new RuntimeException("Failed to generate AI summary: " + e.getMessage());
+        }
+    }
+
+
 }

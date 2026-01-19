@@ -1,5 +1,6 @@
 package com.smartquit.smartquitiot.client;
 
+import com.smartquit.smartquitiot.dto.request.AISummaryRequest;
 import com.smartquit.smartquitiot.dto.request.AiPredictionRequest;
 import com.smartquit.smartquitiot.dto.response.AiPredictionResponse;
 import com.smartquit.smartquitiot.dto.response.ContentCheckResponseDTO;
@@ -23,4 +24,7 @@ public interface AiServiceClient {
 
     @PostMapping("/predict-quit-status")
     AiPredictionResponse predictQuitStatus(@RequestBody AiPredictionRequest request);
+
+    @PostMapping("/summarize-week")
+    Object getWeeklySummary(@RequestBody AISummaryRequest request);
 }

@@ -88,4 +88,14 @@ public class DiaryRecordController {
         DiaryRecordDTO updatedRecord = diaryRecordService.updateDiaryRecord(recordId, request);
         return ResponseEntity.ok(updatedRecord);
     }
+
+    @GetMapping("/summary/{memberId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Get weekly AI summary for a specific member (Admin/Coach only)")
+    public ResponseEntity<?> getMemberWeeklySummary(@PathVariable int memberId) {
+        log.info("REST request to get AI weekly summary for memberId: {}", memberId);
+        Object summary = diaryRecordService.getWeeklySummaryFromAI(memberId);
+        return ResponseEntity.ok(com.smartquit.smartquitiot.dto.response.GlobalResponse.ok("Summary generated successfully", summary));
+    }
 }

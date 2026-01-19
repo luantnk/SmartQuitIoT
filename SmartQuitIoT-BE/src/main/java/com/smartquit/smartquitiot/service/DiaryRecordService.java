@@ -4,7 +4,9 @@ import com.smartquit.smartquitiot.dto.request.DiaryRecordRequest;
 import com.smartquit.smartquitiot.dto.request.DiaryRecordUpdateRequest;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
 import com.smartquit.smartquitiot.dto.response.GlobalResponse;
+import com.smartquit.smartquitiot.entity.DiaryRecord;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +20,5 @@ public interface DiaryRecordService {
     List<DiaryRecordDTO> getDiaryRecordsHistoryByMemberId(int memberId);
     boolean hasCreatedDiaryRecordToday();
     DiaryRecordDTO updateDiaryRecord(int recordId,  DiaryRecordUpdateRequest request);
+    Object getWeeklySummaryFromAI(int memberId);
 }
