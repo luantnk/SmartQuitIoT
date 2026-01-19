@@ -19,4 +19,5 @@ public class ChatbotResponse {
     List<AssistantMessage.ToolCall> toolCalls;
     List<Media> media;
     String text;
+    String audioBase64;
 }
