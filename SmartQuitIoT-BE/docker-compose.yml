@@ -183,16 +183,16 @@ services:
       - "8000:8000"
     environment:
       - TZ=Asia/Ho_Chi_Minh
+      - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASS}
+      - DB_NAME=smartquitiot
     volumes:
       - ai_model_cache:/root/.cache/huggingface
     networks:
       - smartquitiot-network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 10s
 
   prometheus:
     image: prom/prometheus:latest
