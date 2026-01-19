@@ -1,0 +1,253 @@
+:root {
+  --meeting-height: 60vh; /* change to 70vh or px if you want taller */
+}
+
+/* page */
+.page {
+  padding: 18px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #0f172a;
+  background: #ffffff;
+  min-height: 80vh;
+}
+
+/* header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-right: 8px;
+}
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.title {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.headerRight {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* SIDE-BY-SIDE GRID with equal columns */
+.gridSideBySide {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* equal width */
+  gap: 16px;
+  width: 100%;
+  align-items: start;
+}
+
+/* tile */
+.tile {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.12s ease;
+}
+
+/* tile header */
+.tileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+  font-size: 13px;
+  font-weight: 700;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.4)
+  );
+}
+.tileBadge {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-weight: 700;
+}
+
+/* inner video container - equal height for both columns */
+.tileInner {
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: var(--meeting-height);
+  min-height: 360px;
+}
+
+/* ensure video elements fill container */
+.tileInner video,
+.tileInner > video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain; /* keep full frame, change to cover to fill/crop */
+  background: #000;
+}
+
+/* placeholder */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #cbd5e1;
+  text-align: center;
+}
+.placeholderName {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* controls */
+.controlsWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.03);
+}
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.controlBtn {
+  border: none;
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 12px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.12s;
+  width: 48px;
+  height: 48px;
+}
+.controlBtn:hover {
+  transform: translateY(-3px);
+  background: #e6eef5;
+}
+.leaveBtn {
+  background: linear-gradient(90deg, #ff7a7a, #ff4d4d);
+  color: white;
+  width: 52px;
+  height: 52px;
+}
+.meta {
+  font-size: 13px;
+  color: #475569;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.timer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0b5563;
+}
+.participantCount {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #663c00;
+}
+
+/* responsive: stack on small screens */
+@media (max-width: 980px) {
+  .gridSideBySide {
+    grid-template-columns: 1fr;
+  }
+  :root {
+    --meeting-height: 50vh;
+  }
+}
+
+/* smaller screens */
+@media (max-width: 600px) {
+  :root {
+    --meeting-height: 40vh;
+  }
+  .tileInner {
+    min-height: 240px;
+  }
+}
+
+/* loading / error */
+.loading {
+  padding: 24px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.error {
+  padding: 24px;
+  color: #c92a2a;
+  background: #fff5f5;
+  border-radius: 8px;
+}
+.tileInner {
+  background: #000;
+  position: relative;
+  height: var(--meeting-height);
+  min-height: 360px;
+
+  /* IMPORTANT: remove flex centering */
+  display: block !important;
+  overflow: hidden;
+}
+
+.tileInner video,
+.tileInner > video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  background: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.placeholder {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

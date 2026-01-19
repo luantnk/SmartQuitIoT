@@ -1,0 +1,77 @@
+package com.smartquit.smartquitiot.entity;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.smartquit.smartquitiot.enums.PhaseStatus;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "phase")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Phase {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
+
+    String name;
+    LocalDate startDate;
+    LocalDate endDate;
+    int durationDays;
+    int totalMissions;
+    int completedMissions;
+    @Column(precision = 5, scale = 2)
+    LocalDateTime completedAt;
+    boolean keepPhase = false;
+    boolean redo = false; // phase này được chọn làm lại
+
+    //condition phase
+    BigDecimal progress;
+    double avgCravingLevel;
+    double avgCigarettesPerDay;
+    double avgMood;
+    double avgAnxiety;
+    double avgConfidentLevel;
+    //double fm_cigarettes_total;
+
+
+    @Column(name = "condition_json", columnDefinition = "JSON", nullable = false)
+    @Type(JsonType.class)
+    JsonNode condition;
+
+    @Column(columnDefinition = "TEXT")
+    String reason;
+
+    @Enumerated(EnumType.STRING)
+    PhaseStatus status;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quit_plan_id")
+    QuitPlan quitPlan;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_phase_condition_id")
+    SystemPhaseCondition systemPhaseCondition;
+
+    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<PhaseDetail> details = new ArrayList<>();
+
+
+}

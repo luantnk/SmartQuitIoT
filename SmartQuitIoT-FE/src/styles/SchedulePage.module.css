@@ -1,0 +1,701 @@
+:root {
+  --accent-1: #00d09e;
+  --accent-2: #00b88a;
+  --muted: #000000;
+  --card-bg: #ffffff;
+  --panel-border: #e6eef0;
+}
+
+/* ===== GLOBAL HELPERS ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Page: giảm padding để thấy nhiều nội dung hơn */
+.page {
+  min-height: 100vh;
+  padding: 20px; /* giảm từ 32px */
+  background: linear-gradient(135deg, #f1f5f9 0%, #ecfdf5 50%, #e6fffa 100%);
+  font-family: Inter, system-ui, sans-serif;
+  color: #1f2937;
+  margin: 0 auto;
+  width: 80vw;
+  overflow-x: clip;
+}
+
+/* Header - nhỏ gọn */
+.header {
+  margin-bottom: 18px;
+}
+.headerRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.iconWrap {
+  width: 48px; /* giảm */
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(3, 105, 88, 0.1);
+}
+.iconWhite {
+  color: white;
+  width: 22px;
+  height: 22px;
+}
+.title {
+  font-size: 22px; /* giảm */
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+.subtitle {
+  margin: 0;
+  color: #0000006b; /* slightly lighter */
+  font-size: 13px;
+}
+
+/* Grid layout: make calendar a bit smaller so right panel has room */
+.grid {
+  display: grid;
+  /* calendar flexible in a reasonable range, right panel fills remainder */
+  grid-template-columns: minmax(360px, 560px) minmax(0, 1fr);
+  gap: 16px; /* giảm gap */
+}
+.colLeft,
+.colRight {
+  min-width: 0;
+}
+
+/* Card (reduce paddings & radii slightly) */
+.card {
+  background: var(--card-bg);
+  border-radius: 14px; /* giảm */
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+  min-width: 0;
+  height: 600px;
+}
+
+/* Calendar header - compact */
+.cardHeader {
+  padding: 14px; /* giảm */
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.iconBtn {
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  border: none;
+  cursor: pointer;
+}
+.monthLabel {
+  font-size: 16px; /* giảm */
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.headerActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Buttons - slightly smaller */
+.btnGhost {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--accent-1);
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+.btnGhostLight {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* selected info line - smaller */
+.selectedInfo {
+  padding: 8px 12px;
+  color: rgb(52, 166, 147);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+}
+
+/* calendar body - compact */
+.calendarBody {
+  padding: 12px; /* giảm */
+}
+.weekHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.weekDay {
+  text-align: center;
+  font-weight: 600;
+  color: #000;
+  font-size: 12px; /* giảm */
+  padding: 4px 0;
+}
+
+/* calendar grid smaller squares */
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px; /* giảm gap */
+}
+.emptyCell {
+  aspect-ratio: 1 / 1;
+  background: transparent;
+  border-radius: 10px;
+}
+.day,
+.dayAssigned,
+.daySelected {
+  aspect-ratio: 1/1;
+  padding: 6px; /* giảm padding */
+  border-radius: 10px; /* giảm */
+  border: 1.6px solid #e6eef0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.14s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  border-color: var(--accent-2);
+}
+.dayAssigned {
+  background: #f0fdf8; /* slightly lighter */
+  border-color: #dff7ea;
+}
+.daySelected {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border-color: var(--accent-1);
+  transform: none;
+  box-shadow: 0 10px 22px rgba(2, 112, 89, 0.12);
+  color: white;
+}
+.dayInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dayNumber {
+  font-weight: 700;
+  font-size: 15px; /* giảm */
+  color: inherit;
+}
+.assignedBadge {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+  color: var(--accent-1);
+  font-weight: 600;
+  font-size: 11px; /* giảm */
+}
+.assignedCount {
+  font-size: 11px;
+}
+
+/* icons sizes reduced */
+.iconSmall {
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+.iconTiny {
+  width: 12px;
+  height: 12px;
+  color: var(--accent-1);
+}
+.iconCheck {
+  width: 16px;
+  height: 16px;
+  color: white;
+  margin-top: 4px;
+}
+.iconAccent {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-1);
+}
+.iconHuge {
+  width: 48px;
+  height: 48px;
+  color: #c7f3e6;
+}
+
+/* Coach panel header compact */
+.coachHeader {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  padding: 12px; /* giảm */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.coachTitle {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.coachTitleText {
+  margin: 0;
+  font-weight: 700;
+  font-size: 14px; /* giảm */
+}
+.coachSubtitle {
+  font-size: 12px;
+}
+
+/* card body smaller paddings */
+.cardBody {
+  padding: 12px;
+}
+.searchInput {
+  width: 100%;
+  padding: 10px 12px; /* giảm */
+  border-radius: 10px;
+  border: 1.8px solid #e6eef0;
+  outline: none;
+  transition: all 0.1s;
+  font-size: 13px;
+}
+.searchInput:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 6px 18px rgba(2, 112, 89, 0.06);
+}
+
+/* coach list - tighter */
+.coachList {
+  margin-top: 12px;
+  max-height: 325px; /* giảm */
+  overflow: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* giảm */
+  min-width: 0;
+}
+.coachItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px; /* giảm */
+  border-radius: 10px;
+  border: 1.6px solid #f1f5f9;
+  background: #fbfcfd;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.coachItemSelected {
+  background: linear-gradient(90deg, #f0fdf8, #e8fff6);
+  border-color: var(--accent-1);
+  box-shadow: 0 6px 16px rgba(2, 112, 89, 0.06);
+}
+.checkbox {
+  width: 16px;
+  height: 16px;
+}
+.avatar {
+  width: 34px; /* giảm */
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+  max-width: 100%;
+}
+.coachInfo {
+  flex: 1;
+  min-width: 0;
+}
+.coachName {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+}
+.coachId {
+  color: #0000002c;
+  font-size: 11px;
+}
+
+/* coach actions smaller */
+.coachActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+.btnOutline {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+}
+.btnGhostOutline {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+/* assign button smaller */
+.assignButton {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(2, 112, 89, 0.1);
+}
+
+/* note */
+/* note */
+.note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+}
+
+/* ======================
+   MASTER SCHEDULE - UPGRADED
+   ====================== */
+
+.masterCard {
+  margin-top: 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid rgba(2, 112, 89, 0.06);
+  box-shadow: 0 10px 30px rgba(2, 112, 89, 0.04);
+}
+
+/* header */
+.masterHeader {
+  padding: 14px 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 208, 158, 0.95),
+    rgba(0, 184, 138, 0.95)
+  );
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.masterLeft {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.masterTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+.masterSubtitle {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.92;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* export button — big, clear CTA */
+.exportBtn {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+  box-shadow: none;
+}
+.exportBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 112, 89, 0.08);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* empty state */
+.emptyMaster {
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(2, 112, 89, 0.02), transparent);
+}
+.iconHuge {
+  width: 56px;
+  height: 56px;
+  color: rgba(2, 112, 89, 0.16);
+}
+.emptyTitle {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+  color: #0f172a;
+}
+.emptySub {
+  margin: 0;
+  color: #9aa3a0;
+  font-size: 13px;
+}
+
+/* table wrapper (scroll horizontally if needed) */
+.tableWrap {
+  overflow-x: auto;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.98)
+  );
+  padding: 12px 16px;
+}
+
+/* table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px; /* helps maintain layout on small screens */
+}
+.table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 700;
+  color: #23343b;
+  border-bottom: 1px solid rgba(14, 28, 21, 0.06);
+  font-size: 13px;
+  background: transparent;
+}
+.tableRow {
+  transition: background 0.12s ease;
+}
+.tableRow:hover {
+  background: rgba(2, 112, 89, 0.02);
+}
+
+/* table cells */
+.tdDate,
+.tdCoaches,
+.tdActions {
+  padding: 12px 14px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+/* date cell */
+.rowDate {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.iconAccent {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-1);
+  opacity: 0.95;
+}
+.dateText {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* coaches chips area */
+.coachChips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: 100%;
+}
+.coachChip {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(236, 253, 245, 1),
+    rgba(230, 255, 250, 1)
+  );
+  border: 1px solid rgba(0, 208, 158, 0.14);
+  box-shadow: 0 3px 10px rgba(2, 112, 89, 0.03);
+  font-weight: 600;
+  color: #083933;
+  font-size: 13px;
+}
+.coachChipText {
+  font-weight: 700;
+  color: #0f172a;
+}
+.removeCoachBtn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.removeCoachBtn:hover {
+  background: rgba(244, 63, 94, 0.06);
+}
+.iconTinyRed {
+  width: 14px;
+  height: 14px;
+  color: #ef4444;
+}
+
+/* actions */
+.tdActions {
+  text-align: left;
+}
+.removeDateBtn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fff7f7, #fff0f0);
+  color: #b91c1c;
+  border: 1px solid rgba(249, 205, 211, 0.6);
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.08s ease, box-shadow 0.08s;
+}
+.removeDateBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(185, 28, 28, 0.08);
+}
+.iconSmall {
+  width: 16px;
+  height: 16px;
+  color: #b91c1c;
+}
+
+/* responsive tweaks */
+@media (max-width: 900px) {
+  .masterHeader {
+    padding: 12px;
+  }
+  .exportBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .table {
+    min-width: 480px;
+  }
+  .coachChip {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+.colRight > .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.colRight .cardBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.coachList {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+}
+
+.coachFooter {
+  margin-top: 12px; /* spacing from list */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coachActions {
+  display: flex;
+  gap: 8px;
+}
+.monthPicker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.monthSelect,
+.yearSelect {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.9);
+  transition: background 0.15s ease;
+}
+.monthSelect:hover,
+.yearSelect:hover {
+  background: rgba(255, 255, 255, 1);
+}
+.noCoachCell {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.noActionText {
+  color: #cbd5e1;
+  font-size: 14px;
+}

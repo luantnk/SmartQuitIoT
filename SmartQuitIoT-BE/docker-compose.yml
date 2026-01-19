@@ -1,0 +1,247 @@
+services:
+  mariadb:
+    image: mariadb:12.1.2
+    container_name: smartquitiot-mariadb
+    restart: always
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: smartquitiot
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  backend:
+    image: ghcr.io/luantnk/smartquitiot-be:latest
+    container_name: smartquitiot-app
+    pull_policy: always
+    restart: always
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+
+      # Database configurations
+      TZ: Asia/Ho_Chi_Minh
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/smartquitiot?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
+
+      # Jwt key configurations
+      SIGNER_KEY: ${SIGNER_KEY}
+      REFRESH_TOKEN_KEY: ${REFRESH_TOKEN_KEY}
+
+      # Gemini key configuration
+      OPEN_API_KEY: ${OPEN_API_KEY}
+      YOUR_WEB_CLIENT_ID: ${YOUR_WEB_CLIENT_ID}
+
+      # Brevo configuration
+#      EMAIL_USERNAME: ${EMAIL_USERNAME}
+#      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+
+      # PayOs configurations
+      PAYOS_API_KEY: ${PAYOS_API_KEY}
+      PAYOS_CHECKSUM_KEY: ${PAYOS_CHECKSUM_KEY}
+      PAYOS_CLIENT_ID: ${PAYOS_CLIENT_ID}
+
+      # Agora configurations
+      AGORA_APPID: ${AGORA_APPID}
+      AGORA_APPCERTIFICATE: ${AGORA_APPCERTIFICATE}
+
+      # Redis configurations
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+      # RabbitMQ configurations
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: ${RABBIT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBIT_PASSWORD}
+
+      # Brevo configurations
+      BREVO_HOST: ${BREVO_HOST}
+      BREVO_PORT: ${BREVO_PORT}
+      BREVO_USERNAME: ${BREVO_USERNAME}
+      BREVO_KEY: ${BREVO_KEY}
+
+      # ElasticSearch configurations
+      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+
+      # Mailpit Configuration
+      SPRING_MAIL_HOST: mailpit
+      SPRING_MAIL_PORT: 1025
+
+
+      # AI Service configurations
+      AI_SERVICE_URL: "http://smartquitiot-ai:8000"
+
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: 'redis:8.4.0'
+    container_name: smartquitiot-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  rabbitmq:
+    image: rabbitmq:4.2.2-management
+    container_name: smartquitiot-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+      RABBITMQ_ERLANG_COOKIE: ${RABBIT_COOKIE}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -vq '\"status\":\"red\"'" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: smartquitiot-mailpit
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - smartquitiot-network
+
+  ai-service:
+    image: ghcr.io/luantnk/smartquitiot-ai:latest
+    container_name: smartquitiot-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - ai_model_cache:/root/.cache/huggingface
+    networks:
+      - smartquitiot-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: smartquitiot-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - smartquitiot-network
+
+  loki:
+      image: grafana/loki:2.9.2
+      container_name: smartquitiot-loki
+      restart: always
+      ports:
+        - "3100:3100"
+      command: -config.file=/etc/loki/local-config.yaml
+      networks:
+        - smartquitiot-network
+
+  grafana:
+      image: grafana/grafana:latest
+      container_name: smartquitiot-grafana
+      restart: always
+      ports:
+        - "3000:3000"
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      depends_on:
+        - prometheus
+        - loki
+      volumes:
+        - grafana_data:/var/lib/grafana
+      networks:
+        - smartquitiot-network
+
+
+networks:
+    smartquitiot-network:
+      name: smartquitiot-network
+      driver: bridge
+
+volumes:
+  mariadb_data:
+  redis_data:
+  rabbitmq_data:
+  es_data:
+  ai_model_cache:
+  grafana_data:

@@ -1,0 +1,172 @@
+name: CI/CD Pipeline For Python AI Microservice
+
+# --- TRIGGERS ---
+# Trigger pipeline on push to main branch OR when a semantic version tag (e.g., v1.0.0) is pushed.
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+
+ # Unit Testing
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+          cache: 'pip'
+
+      # System dependencies required for some Python libraries (e.g., OpenCV, certain ML libs)
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1 libglib2.0-0
+
+#      - name: Lint with Flake8
+#        run: |
+#          # stop the build if there are Python syntax errors or undefined names
+#          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Check formatting with Black
+        run: |
+          # --check makes the build fail if files are unformatted
+          # Remove --check if you just want it to run silently (not recommended for CI)
+          black --check .
+
+      # Run tests. If this fails, the pipeline stops here.
+      - name: Run Tests
+        run: |
+          export PYTHONPATH=$PYTHONPATH:.
+          pytest tests/
+
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test # CRITICAL: Only run if tests pass (Quality Gate)
+    if: github.event_name == 'push' # Do not run on Pull Requests (save resources)
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Lowercase Image Name
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Automatically generate tags based on Git context (e.g., 'latest', 'sha-xyz', 'v1.0.0')
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,format=long
+            type=semver,pattern={{version}}       # Generates tag: 1.0.0
+            type=semver,pattern={{major}}.{{minor}} # Generates tag: 1.0
+
+      # Load docker image
+      - name: Build and load for scanning
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Security check with Trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          trivyignores: .trivyignore
+
+     # Push docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Notification
+  notify:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [ test, build-and-push ]
+    steps:
+      - name: Discord Notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+          status: "${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}"
+
+          title: "CI/CD Pipeline Report - ${{ github.repository }}"
+
+          content: "${{ contains(needs.*.result, 'failure') && format('Critical Alert: <@{0}> check logs immediately.', secrets.DISCORD_ALERT_ID) || 'Deployment completed successfully.' }}"
+
+          description: |
+            **Build Metadata**
+            User: `${{ github.actor }}`
+            Branch: `${{ github.ref_name }}`
+            Message: `${{ github.event.head_commit.message }}`
+            
+            **Execution Status**
+            ```text
+            JOB NAME          STATUS
+            --------------------------
+            Unit Testing      ${{ needs.test.result == 'success' && 'PASS' || 'FAIL' }}
+            Docker Build      ${{ needs.build-and-push.result == 'success' && 'PASS' || 'FAIL' }}
+            ```
+            
+            [View Full System Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          color: "${{ contains(needs.*.result, 'failure') && '0xFF0000' || '0x2EB67D' }}"
+
+          avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          username: "DevOps Bot"

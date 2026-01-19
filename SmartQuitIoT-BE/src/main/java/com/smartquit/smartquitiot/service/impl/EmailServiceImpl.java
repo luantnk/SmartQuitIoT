@@ -1,0 +1,100 @@
+package com.smartquit.smartquitiot.service.impl;
+
+import com.smartquit.smartquitiot.service.EmailService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value; // Import thêm cái này
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class EmailServiceImpl implements EmailService {
+
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
+    @Override
+    public void sendHtmlOtpEmail(String to, String subject, String username, String otp) {
+        log.info("DEBUG EMAIL: From=[{}] To=[{}]", fromEmail, to);
+        try {
+            Context context = new Context();
+            context.setVariable("username", username);
+            context.setVariable("otp", otp);
+            String htmlContent = templateEngine.process("otp-email", context);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            String cleanEmail = fromEmail.replace("}", "").replace(";", "").trim();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setFrom(cleanEmail);
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+            helper.addInline("logoImage", new ClassPathResource("images/logo.png"));
+            mailSender.send(mimeMessage);
+            log.info("OTP email sent to {}", to);
+        } catch (MessagingException e) {
+            log.error("Failed to send OTP email: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to send HTML email", e);
+        }
+    }
+
+    @Override
+    public void sendPaymentSuccessEmail(String to, String name, String packageName, long amount, long orderCode) {
+        try {
+            NumberFormat format = NumberFormat.getInstance(Locale.US);
+            Context context = new Context();
+            context.setVariable("name", name);
+            context.setVariable("packageName", packageName);
+            context.setVariable("amount", format.format(amount));
+            context.setVariable("orderCode", orderCode);
+            String htmlContent = templateEngine.process("payment-success-email", context);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject("SmartQuit - Payment Confirmation for Order #" + orderCode);
+            helper.setText(htmlContent, true);
+            helper.addInline("logoImage", new ClassPathResource("images/logo.png"));
+            mailSender.send(message);
+            log.info("Payment success email sent to {}", to);
+        } catch (MessagingException e) {
+            log.error("Failed to send payment success email: {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void sendPaymentCancelEmail(String to, String name, String packageName, long orderCode) {
+        try {
+            Context context = new Context();
+            context.setVariable("name", name);
+            context.setVariable("packageName", packageName);
+            context.setVariable("orderCode", orderCode);
+            String htmlContent = templateEngine.process("payment-cancel-email", context);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject("SmartQuit - Payment Cancelled for Order #" + orderCode);
+            helper.setText(htmlContent, true);
+            helper.addInline("logoImage", new ClassPathResource("images/logo.png"));
+            mailSender.send(message);
+            log.info("Payment cancellation email sent to {}", to);
+        } catch (MessagingException e) {
+            log.error("Failed to send payment cancellation email to {}: {}", to, e.getMessage(), e);
+        }
+    }
+}

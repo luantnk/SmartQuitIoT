@@ -1,0 +1,37 @@
+package com.smartquit.smartquitiot.service;
+
+import com.smartquit.smartquitiot.dto.request.*;
+import com.smartquit.smartquitiot.dto.response.CoachDTO;
+import com.smartquit.smartquitiot.dto.response.GlobalResponse;
+import com.smartquit.smartquitiot.dto.response.MemberDTO;
+import com.smartquit.smartquitiot.dto.response.VerifyOtpResponse;
+import com.smartquit.smartquitiot.entity.Account;
+
+import java.util.Map;
+
+public interface AccountService {
+
+    MemberDTO registerMember(MemberAccountRequest request);
+
+    CoachDTO registerCoach(CoachAccountRequest request);
+
+    Account getAuthenticatedAccount();
+
+    void updatePassword(ChangePasswordRequest request);
+
+    void forgotPassword(String email);
+
+    VerifyOtpResponse verifyOtp(VerifyOtpRequest request);
+
+    void resetPassword(ResetPasswordRequest request);
+
+    Map<String, Object> getAccountStatistics();
+
+    GlobalResponse<String> activeAccountById(int accountId);
+
+    GlobalResponse<String> deleteAccountById(int accountId);
+
+    Account getAdminAccount();
+
+    void resetAccountPassword(int accountId, String newPassword);
+}
