@@ -6,12 +6,17 @@ on:
   push:
     branches: [ "main" ]
     tags: [ 'v*.*.*' ]
+    paths:
+      - 'SmartQuitIoT-AI/**'
+      - '.github/workflows/ci-cd.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-AI/**'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}-ai
 
 jobs:
 

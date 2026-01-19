@@ -3,11 +3,13 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-BE/**'
+      - '.github/workflows/build-and-push.yml'
 
 env:
   REGISTRY: ghcr.io
-
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}-be
 
 jobs:
   build-and-push:
