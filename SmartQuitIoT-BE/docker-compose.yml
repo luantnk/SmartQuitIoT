@@ -177,6 +177,7 @@ services:
   ai-service:
     image: ghcr.io/luantnk/smartquitiot-ai:latest
     container_name: smartquitiot-ai
+    pull_policy: always
     restart: unless-stopped
     ports:
       - "8000:8000"

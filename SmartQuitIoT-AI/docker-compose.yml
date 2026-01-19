@@ -1,0 +1,20 @@
+ai-service:
+    image: ghcr.io/luantnk/smartquitiot-ai:latest
+    container_name: smartquitiot-ai
+    pull_policy: always
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
+
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASS}
+      - DB_NAME=smartquitiot
+    volumes:
+      - ai_model_cache:/root/.cache/huggingface
+    networks:
+      - smartquitiot-network
