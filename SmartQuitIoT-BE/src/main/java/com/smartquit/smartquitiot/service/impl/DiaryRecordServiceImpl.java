@@ -2,6 +2,7 @@ package com.smartquit.smartquitiot.service.impl;
 
 import com.smartquit.smartquitiot.client.AiServiceClient;
 import com.smartquit.smartquitiot.dto.request.*;
+import com.smartquit.smartquitiot.dto.response.AnalyzeDiaryResponse;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
 import com.smartquit.smartquitiot.dto.response.GlobalResponse;
 import com.smartquit.smartquitiot.entity.*;
@@ -265,6 +266,15 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
         AddAchievementRequest addAchievementRequestSteps = new AddAchievementRequest();
         addAchievementRequestSteps.setField("steps");
         memberAchievementService.addMemberAchievement(addAchievementRequestSteps).orElse(null);
+
+
+        try {
+            analyzeAndNotify(diaryRecord, member);
+        } catch (Exception e) {
+            log.error("Failed to analyze diary record via AI Service", e);
+
+        }
+
 
         if (isOnPlan && request.getHaveSmoked() == true) {
             List<ReminderTemplate> smokedTemplates =
@@ -697,9 +707,13 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
         }
         long moneySaved = (noSmokedDayCount * moneyForSmokedPerDay.longValue()) - (totalCigarettesSmoked * pricePerCigarettes.longValue());
         metric.setMoneySaved(BigDecimal.valueOf(moneySaved - nrtTotalSpent));
-
-
         metricRepository.save(metric);
+        try {
+            analyzeAndNotify(record, member);
+        } catch (Exception e) {
+            log.error("Failed to analyze updated diary record via AI Service", e);
+        }
+
         return diaryRecordMapper.toDiaryRecordDTO(record);
     }
 
@@ -758,5 +772,52 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
         }
     }
 
+    /**
+     * Helper method to call Python API and send Notification based on Red/Yellow/Green status.
+     */
+    private void analyzeAndNotify(DiaryRecord record, Member member) {
+        List<String> triggerList = record.getTriggers() != null
+                ? record.getTriggers().stream().map(Object::toString).collect(toList())
+                : new ArrayList<>();
+
+        AnalyzeDiaryRequest aiRequest = AnalyzeDiaryRequest.builder()
+                .anxietyLevel(record.getAnxietyLevel())
+                .cravingLevel(record.getCravingLevel())
+                .moodLevel(record.getMoodLevel())
+                .haveSmoked(record.isHaveSmoked())
+                .note(record.getNote() != null ? record.getNote() : "")
+                .triggers(triggerList)
+                .build();
+
+        log.info("Calling AI Service for Diary Analysis for Member: {}", member.getId());
+        AnalyzeDiaryResponse aiResponse = aiServiceClient.analyzeDiaryRecord(aiRequest);
+        if (aiResponse == null || aiResponse.getMessage() == null) {
+            return;
+        }
+
+        String title;
+        String statusColor = aiResponse.getStatusColor() != null
+                ? aiResponse.getStatusColor().toLowerCase()
+                : "green";
+
+        title = switch (statusColor) {
+            case "red" -> "Stay Strong ";
+            case "yellow" -> "Here for you";
+            default -> "Great Job!";
+        };
+
+        notificationService.saveAndPublish(
+                member.getAccount(),
+                NotificationType.REMINDER,
+                title,
+                aiResponse.getMessage(),
+                null,
+                null,
+                "smartquit://diary"
+        );
+        log.info("Sent AI Notification. Status: {}, Title: {}", statusColor, title);
+    }
 
 }
+
+
