@@ -1,15 +1,19 @@
-name: Security Scan
+name: Security Scan (AI Service)
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-AI/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-AI/**'
   schedule:
     - cron: '30 1 * * 0'
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze Python
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -29,6 +33,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        source-root: SmartQuitIoT-AI
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
