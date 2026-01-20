@@ -26,7 +26,11 @@ from app.services.content_moderation_service import (
     check_image_url,
     check_video_url,
 )
-from app.services.audio_service import transcribe_audio_file, text_to_speech_file, text_to_speech_stream
+from app.services.audio_service import (
+    transcribe_audio_file,
+    text_to_speech_file,
+    text_to_speech_stream,
+)
 from app.services.summary_service import (
     summary_service,
     generate_coach_summary,
@@ -239,7 +243,6 @@ async def api_voice_to_text(file: UploadFile = File(...)):
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-
 
 
 @app.post("/text-to-voice", tags=["Audio"])
