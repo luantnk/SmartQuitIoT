@@ -12,8 +12,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatbotMissionResponse {
 
-    String missionName;
-    String missionDescription;
-    String missionStatus;
-
+  String missionName;
+  String missionDescription;
+  String missionStatus;
 }

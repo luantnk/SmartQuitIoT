@@ -3,6 +3,7 @@ package com.smartquit.smartquitiot.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ConditionAchievementDTO {
-    private String field;
-    private String operator;
-    private int value;
+  private String field;
+  private String operator;
+  private int value;
 }

@@ -6,12 +6,11 @@ import com.smartquit.smartquitiot.enums.AccountType;
 import com.smartquit.smartquitiot.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -23,52 +22,61 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Account {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Column(name = "username",unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
-    String username;
-    @JsonIgnore
-    String password;
-    @Enumerated(EnumType.STRING)
-    Role role;
-    @Email(message = "Email is invalid", regexp = "^[A-Za-z0-9+_.-]+@(.+)$")
-    @Column(name = "email",unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
-    String email;
-    @Enumerated(EnumType.STRING)
-    AccountType accountType;
-    boolean isActive = true;
-    boolean isBanned = false;
-    boolean isFirstLogin = true;
-    @CreationTimestamp
-    LocalDateTime createdAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Column(name = "otp")
-    private String otp;
+  @Column(
+      name = "username",
+      unique = true,
+      columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
+  String username;
 
-    @Column(name = "otp_generated_time")
-    private LocalDateTime otpGeneratedTime;
+  @JsonIgnore String password;
 
-    @Column(name = "reset_token")
-    private String resetToken;
+  @Enumerated(EnumType.STRING)
+  Role role;
 
-    @Column(name = "reset_token_expiry_time")
-    private LocalDateTime resetTokenExpiryTime;
+  @Email(message = "Email is invalid", regexp = "^[A-Za-z0-9+_.-]+@(.+)$")
+  @Column(
+      name = "email",
+      unique = true,
+      columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
+  String email;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    Member member;
+  @Enumerated(EnumType.STRING)
+  AccountType accountType;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "account", cascade = CascadeType.MERGE)
-    Coach coach;
+  boolean isActive = true;
+  boolean isBanned = false;
+  boolean isFirstLogin = true;
+  @CreationTimestamp LocalDateTime createdAt;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Post> posts;
+  @Column(name = "otp")
+  private String otp;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "account")
-    List<Notification> notifications;
+  @Column(name = "otp_generated_time")
+  private LocalDateTime otpGeneratedTime;
 
+  @Column(name = "reset_token")
+  private String resetToken;
+
+  @Column(name = "reset_token_expiry_time")
+  private LocalDateTime resetTokenExpiryTime;
+
+  @JsonIgnore
+  @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+  Member member;
+
+  @JsonIgnore
+  @OneToOne(mappedBy = "account", cascade = CascadeType.MERGE)
+  Coach coach;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Post> posts;
+
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
+  List<Notification> notifications;
 }

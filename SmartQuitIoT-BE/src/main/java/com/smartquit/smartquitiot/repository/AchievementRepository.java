@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AchievementRepository extends JpaRepository<Achievement, Integer> {
 
-    Page<Achievement> findAll(Specification<Achievement> spec, Pageable packable);
+  Page<Achievement> findAll(Specification<Achievement> spec, Pageable packable);
 }

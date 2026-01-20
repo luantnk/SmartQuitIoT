@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class VerifyOtpResponse {
-    private String resetToken;
+  private String resetToken;
 }

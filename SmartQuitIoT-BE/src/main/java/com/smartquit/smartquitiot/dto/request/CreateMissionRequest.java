@@ -14,27 +14,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateMissionRequest {
 
-    @NotBlank(message = "Code is required")
-    private String code;
+  @NotBlank(message = "Code is required")
+  private String code;
 
-    @NotBlank(message = "Name is required")
-    private String name;
+  @NotBlank(message = "Name is required")
+  private String name;
 
-    private String description;
+  private String description;
 
-    @NotNull(message = "Mission Phase is required")
-    private MissionPhase phase;
+  @NotNull(message = "Mission Phase is required")
+  private MissionPhase phase;
 
-    @NotNull(message = "Status is required")
-    private MissionStatus status;
+  @NotNull(message = "Status is required")
+  private MissionStatus status;
 
-    @Min(value = 0, message = "EXP must be at least 0")
-    private int exp;
+  @Min(value = 0, message = "EXP must be at least 0")
+  private int exp;
 
-    @NotNull(message = "Mission type ID is required")
-    private Integer missionTypeId;
+  @NotNull(message = "Mission type ID is required")
+  private Integer missionTypeId;
 
-    private Integer interestCategoryId; // nullable
+  private Integer interestCategoryId; // nullable
 
-    private String condition; // JSON string
+  private String condition; // JSON string
 }

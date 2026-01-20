@@ -12,9 +12,8 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MembershipPackagePlan {
 
-    Long planPrice;
-    Integer planDuration;
-    String planDurationUnit;
-    MembershipPackageDTO membershipPackage;
-
+  Long planPrice;
+  Integer planDuration;
+  String planDurationUnit;
+  MembershipPackageDTO membershipPackage;
 }

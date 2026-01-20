@@ -134,7 +134,7 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         if: always()
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK_AI }}
           status: "${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}"
           title: "CI/CD Pipeline Report - AI Service"
           content: "${{ contains(needs.*.result, 'failure') && format('Critical Alert: <@{0}> check logs immediately.', secrets.DISCORD_ALERT_ID) || 'Deployment completed successfully.' }}"

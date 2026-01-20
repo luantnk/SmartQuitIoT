@@ -13,12 +13,15 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewsMedia {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String mediaUrl;
-    @ManyToOne(fetch = FetchType.LAZY)
-    News news;
-    @Enumerated(EnumType.STRING)
-    MediaType mediaType;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
+
+  String mediaUrl;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  News news;
+
+  @Enumerated(EnumType.STRING)
+  MediaType mediaType;
 }

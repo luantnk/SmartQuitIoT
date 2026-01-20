@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatbotPayload {
 
-    String memberId;
-    String message;
+  String memberId;
+  String message;
 }

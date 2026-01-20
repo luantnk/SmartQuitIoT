@@ -6,19 +6,32 @@ import com.smartquit.smartquitiot.entity.Phase;
 import com.smartquit.smartquitiot.entity.PhaseDetail;
 import com.smartquit.smartquitiot.entity.QuitPlan;
 import com.smartquit.smartquitiot.enums.MissionPhase;
-
 import java.util.List;
 
 public interface PhaseDetailMissionService {
-    int savePhaseDetailMissionsForPhase(PhaseBatchMissionsResponse resp);
-    PhaseBatchMissionsResponse generatePhaseDetailMissionsForPhase(List<PhaseDetail> preparedDetails , QuitPlan plan,
-                                                                   int maxPerDay, String phaseName, MissionPhase missionPhase);
+  int savePhaseDetailMissionsForPhase(PhaseBatchMissionsResponse resp);
 
-    QuitPlanResponse completePhaseDetailMission(CompleteMissionRequest completeMissionRequest);
+  PhaseBatchMissionsResponse generatePhaseDetailMissionsForPhase(
+      List<PhaseDetail> preparedDetails,
+      QuitPlan plan,
+      int maxPerDay,
+      String phaseName,
+      MissionPhase missionPhase);
 
-    MissionTodayResponse getListMissionToday();
-    MissionTodayResponse completePhaseDetailMissionAtHomePage(CompleteMissionRequest completeMissionRequest);
-    PhaseBatchMissionsResponse generatePhaseDetailMissionsForPhaseInScheduler(Phase phase, List<PhaseDetail> preparedDetails , QuitPlan plan, int maxPerDay, String phaseName, MissionPhase missionPhase);
+  QuitPlanResponse completePhaseDetailMission(CompleteMissionRequest completeMissionRequest);
 
-    MissionsInPhaseWrapperResponse  getAllMissionsInCurrentPhaseByMemberId(int memberId);
+  MissionTodayResponse getListMissionToday();
+
+  MissionTodayResponse completePhaseDetailMissionAtHomePage(
+      CompleteMissionRequest completeMissionRequest);
+
+  PhaseBatchMissionsResponse generatePhaseDetailMissionsForPhaseInScheduler(
+      Phase phase,
+      List<PhaseDetail> preparedDetails,
+      QuitPlan plan,
+      int maxPerDay,
+      String phaseName,
+      MissionPhase missionPhase);
+
+  MissionsInPhaseWrapperResponse getAllMissionsInCurrentPhaseByMemberId(int memberId);
 }

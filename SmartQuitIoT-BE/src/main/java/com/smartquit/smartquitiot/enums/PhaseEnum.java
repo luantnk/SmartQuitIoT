@@ -1,5 +1,9 @@
 package com.smartquit.smartquitiot.enums;
 
 public enum PhaseEnum {
-    PREPARATION, ONSET, PEAK_CRAVING, SUBSIDING, MAINTENANCE
+  PREPARATION,
+  ONSET,
+  PEAK_CRAVING,
+  SUBSIDING,
+  MAINTENANCE
 }

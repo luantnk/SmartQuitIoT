@@ -8,8 +8,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 @Configuration
 public class WebsocketBeans {
 
-    @Bean("jwtChannelInterceptor")
-    public ChannelInterceptor jwtChannelInterceptor(JwtDecoder jwtDecoder) {
-        return new WebSocketJwtAuthInterceptor(jwtDecoder);
-    }
+  @Bean("jwtChannelInterceptor")
+  public ChannelInterceptor jwtChannelInterceptor(JwtDecoder jwtDecoder) {
+    return new WebSocketJwtAuthInterceptor(jwtDecoder);
+  }
 }

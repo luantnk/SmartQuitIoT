@@ -1,11 +1,10 @@
 package com.smartquit.smartquitiot.dto.response;
 
+import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -13,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class SlotDTO {
 
-    Integer id;
-    LocalTime startTime;
-    LocalTime endTime;
+  Integer id;
+  LocalTime startTime;
+  LocalTime endTime;
 }

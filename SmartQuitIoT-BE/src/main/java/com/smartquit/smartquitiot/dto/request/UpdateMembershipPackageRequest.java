@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateMembershipPackageRequest {
-    int membershipPackageId;
-    long price;
+  int membershipPackageId;
+  long price;
 }

@@ -13,12 +13,15 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostMedia {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    Post post;
-    String mediaUrl;
-    @Enumerated(EnumType.STRING)
-    MediaType mediaType;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  Post post;
+
+  String mediaUrl;
+
+  @Enumerated(EnumType.STRING)
+  MediaType mediaType;
 }

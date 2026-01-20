@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PhaseDetailMissionToolDTO {
-    int id;
-    String code;
-    String name;
-    String description;
+  int id;
+  String code;
+  String name;
+  String description;
 }

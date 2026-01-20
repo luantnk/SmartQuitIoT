@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationResponse {
 
-    boolean isFirstLogin;
-    String accessToken;
-    String refreshToken;
+  boolean isFirstLogin;
+  String accessToken;
+  String refreshToken;
 }

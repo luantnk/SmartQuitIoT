@@ -1,13 +1,12 @@
 package com.smartquit.smartquitiot.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -17,30 +16,29 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Column(columnDefinition = "TEXT")
-    String content;
-    @CreationTimestamp
-    LocalDateTime createdAt;
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Account account;
+  @Column(columnDefinition = "TEXT")
+  String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Comment parent;
+  @CreationTimestamp LocalDateTime createdAt;
+  @UpdateTimestamp LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    Post post;
+  @ManyToOne(fetch = FetchType.LAZY)
+  Account account;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<CommentMedia> commentMedia;
+  @ManyToOne(fetch = FetchType.LAZY)
+  Comment parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    List<Comment> replies;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = false)
+  Post post;
 
+  @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<CommentMedia> commentMedia;
+
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  List<Comment> replies;
 }

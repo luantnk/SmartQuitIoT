@@ -12,9 +12,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JoinTokenResponse {
-    private String channel;
-    private String token;
-    private int uid;
-    private long expiresAtEpoch; // unix seconds
-    private long ttlSeconds;
+  private String channel;
+  private String token;
+  private int uid;
+  private long expiresAtEpoch; // unix seconds
+  private long ttlSeconds;
 }

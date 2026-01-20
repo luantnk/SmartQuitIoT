@@ -7,94 +7,101 @@ import com.smartquit.smartquitiot.enums.NotificationType;
 import com.smartquit.smartquitiot.repository.AppointmentRepository;
 import com.smartquit.smartquitiot.repository.NotificationRepository;
 import com.smartquit.smartquitiot.service.NotificationService;
+import java.time.*;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
-//@ConditionalOnProperty(prefix = "scheduler.reminder", name = "enabled", havingValue = "true")
+// @ConditionalOnProperty(prefix = "scheduler.reminder", name = "enabled", havingValue = "true")
 public class AppointmentReminderScheduler {
 
-    private final AppointmentRepository appointmentRepository;
-    private final NotificationRepository notificationRepository;
-    private final NotificationService notificationService;
+  private final AppointmentRepository appointmentRepository;
+  private final NotificationRepository notificationRepository;
+  private final NotificationService notificationService;
 
-    // reminder offset in minutes
-    private static final int REMINDER_MINUTES = 10;
+  // reminder offset in minutes
+  private static final int REMINDER_MINUTES = 10;
 
-    @Scheduled(fixedDelayString = "${scheduler.reminder.ms:300000}", initialDelayString = "${scheduler.reminder.initialDelayMs:10000}")
-    @Transactional
-    public void remindUpcomingAppointments() {
+  @Scheduled(
+      fixedDelayString = "${scheduler.reminder.ms:300000}",
+      initialDelayString = "${scheduler.reminder.initialDelayMs:10000}")
+  @Transactional
+  public void remindUpcomingAppointments() {
+    try {
+      ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
+      ZonedDateTime now = ZonedDateTime.now(zone);
+      ZonedDateTime target = now.plusMinutes(REMINDER_MINUTES);
+
+      LocalDate date = target.toLocalDate();
+      LocalTime from = target.toLocalTime().minusSeconds(60);
+      LocalTime to = target.toLocalTime().plusSeconds(60);
+
+      log.debug(
+          "ReminderScheduler: scanning appointments for date={} time between {} and {}",
+          date,
+          from,
+          to);
+
+      List<Appointment> upcoming =
+          appointmentRepository.findAppointmentsForReminder(
+              date, from, to, AppointmentStatus.PENDING);
+
+      for (Appointment a : upcoming) {
         try {
-            ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
-            ZonedDateTime now = ZonedDateTime.now(zone);
-            ZonedDateTime target = now.plusMinutes(REMINDER_MINUTES);
+          if (a.getCoach() == null || a.getCoach().getAccount() == null) {
+            log.warn("Appointment {} missing coach/account -> skip reminder", a.getId());
+            continue;
+          }
 
-            LocalDate date = target.toLocalDate();
-            LocalTime from = target.toLocalTime().minusSeconds(60);
-            LocalTime to = target.toLocalTime().plusSeconds(60);
+          Account coachAccount = a.getCoach().getAccount();
+          int coachAccountId = coachAccount.getId();
+          String deepLink = "smartquit://appointment/" + a.getId();
 
-            log.debug("ReminderScheduler: scanning appointments for date={} time between {} and {}", date, from, to);
+          boolean already =
+              notificationRepository
+                  .existsByAccount_IdAndNotificationTypeAndDeepLinkAndIsDeletedFalse(
+                      coachAccountId, NotificationType.APPOINTMENT_REMINDER, deepLink);
+          if (already) {
+            log.debug("Reminder already sent for appointment {} -> skip", a.getId());
+            continue;
+          }
 
-            List<Appointment> upcoming = appointmentRepository.findAppointmentsForReminder(date, from, to, AppointmentStatus.PENDING);
+          LocalDate apDate = a.getCoachWorkSchedule().getDate();
+          LocalTime startTime = a.getCoachWorkSchedule().getSlot().getStartTime();
+          ZonedDateTime startZ = LocalDateTime.of(apDate, startTime).atZone(zone);
+          ZonedDateTime nowZ = ZonedDateTime.now(zone);
 
-            for (Appointment a : upcoming) {
-                try {
-                    if (a.getCoach() == null || a.getCoach().getAccount() == null) {
-                        log.warn("Appointment {} missing coach/account -> skip reminder", a.getId());
-                        continue;
-                    }
+          long minutesUntilStart = Duration.between(nowZ, startZ).toMinutes();
 
-                    Account coachAccount = a.getCoach().getAccount();
-                    int coachAccountId = coachAccount.getId();
-                    String deepLink = "smartquit://appointment/" + a.getId();
+          String title = "Upcoming appointment in " + minutesUntilStart + " minutes";
+          String content =
+              String.format(
+                  "You have an appointment (id=%d) scheduled at %s. Please be ready.",
+                  a.getId(), startTime.toString());
 
-                    boolean already = notificationRepository
-                            .existsByAccount_IdAndNotificationTypeAndDeepLinkAndIsDeletedFalse(
-                                    coachAccountId, NotificationType.APPOINTMENT_REMINDER, deepLink
-                            );
-                    if (already) {
-                        log.debug("Reminder already sent for appointment {} -> skip", a.getId());
-                        continue;
-                    }
+          notificationService.saveAndPublish(
+              coachAccount,
+              NotificationType.APPOINTMENT_REMINDER,
+              title,
+              content,
+              null,
+              "appointments/" + a.getId(),
+              deepLink);
 
-                    LocalDate apDate = a.getCoachWorkSchedule().getDate();
-                    LocalTime startTime = a.getCoachWorkSchedule().getSlot().getStartTime();
-                    ZonedDateTime startZ = LocalDateTime.of(apDate, startTime).atZone(zone);
-                    ZonedDateTime nowZ = ZonedDateTime.now(zone);
-
-                    long minutesUntilStart = Duration.between(nowZ, startZ).toMinutes();
-
-                    String title = "Upcoming appointment in " + minutesUntilStart + " minutes";
-                    String content = String.format("You have an appointment (id=%d) scheduled at %s. Please be ready.",
-                            a.getId(),
-                            startTime.toString()
-                    );
-
-                    notificationService.saveAndPublish(
-                            coachAccount,
-                            NotificationType.APPOINTMENT_REMINDER,
-                            title,
-                            content,
-                            null,
-                            "appointments/" + a.getId(),
-                            deepLink
-                    );
-
-                    log.info("Sent reminder for appointment {} to coachAccount={}", a.getId(), coachAccountId);
-                } catch (Exception e) {
-                    log.error("Failed to send reminder for appointment {}: {}", a.getId(), e.getMessage(), e);
-                }
-            }
-        } catch (Exception ex) {
-            log.error("AppointmentReminderScheduler failed: {}", ex.getMessage(), ex);
+          log.info(
+              "Sent reminder for appointment {} to coachAccount={}", a.getId(), coachAccountId);
+        } catch (Exception e) {
+          log.error("Failed to send reminder for appointment {}: {}", a.getId(), e.getMessage(), e);
         }
+      }
+    } catch (Exception ex) {
+      log.error("AppointmentReminderScheduler failed: {}", ex.getMessage(), ex);
     }
+  }
 }

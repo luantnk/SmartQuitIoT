@@ -6,24 +6,24 @@ import com.smartquit.smartquitiot.dto.response.GlobalResponse;
 import com.smartquit.smartquitiot.dto.response.MembershipPackageDTO;
 import com.smartquit.smartquitiot.dto.response.MembershipPackagePlan;
 import com.smartquit.smartquitiot.dto.response.MembershipSubscriptionDTO;
-
 import java.util.List;
 import java.util.Map;
 
 public interface MembershipPackageService {
-    List<MembershipPackageDTO> getMembershipPackages();
+  List<MembershipPackageDTO> getMembershipPackages();
 
-    List<MembershipPackagePlan>  getMembershipPackagesPlanByMembershipPackageId(int membershipPackageId);
+  List<MembershipPackagePlan> getMembershipPackagesPlanByMembershipPackageId(
+      int membershipPackageId);
 
-    GlobalResponse<?> createMembershipPackagePayment(int membershipPackageId, int duration);
+  GlobalResponse<?> createMembershipPackagePayment(int membershipPackageId, int duration);
 
-    MembershipSubscriptionDTO processMembershipPackagePayment(PaymentProcessRequest request);
+  MembershipSubscriptionDTO processMembershipPackagePayment(PaymentProcessRequest request);
 
-    Map<String, Object> getMembershipStatistics();
+  Map<String, Object> getMembershipStatistics();
 
-    Map<String, Object> getMembershipPackageDetails(int membershipPackageId);
+  Map<String, Object> getMembershipPackageDetails(int membershipPackageId);
 
-    MembershipPackageDTO updateMembershipPackage(UpdateMembershipPackageRequest request);
+  MembershipPackageDTO updateMembershipPackage(UpdateMembershipPackageRequest request);
 
-    List<MembershipPackageDTO> manageMembershipPackages();
+  List<MembershipPackageDTO> manageMembershipPackages();
 }

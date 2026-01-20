@@ -3,10 +3,9 @@ package com.smartquit.smartquitiot.entity;
 import com.smartquit.smartquitiot.enums.DurationUnit;
 import com.smartquit.smartquitiot.enums.MembershipPackageType;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -16,20 +15,21 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MembershipPackage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String name;
-    String description;
-    long price;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Enumerated(EnumType.STRING)
-    MembershipPackageType type; //TRIAL, STANDARD, PREMIUM
+  String name;
+  String description;
+  long price;
 
-    int duration;
+  @Enumerated(EnumType.STRING)
+  MembershipPackageType type; // TRIAL, STANDARD, PREMIUM
 
-    @Enumerated(EnumType.STRING)
-    DurationUnit durationUnit; //DAY, MONTH
+  int duration;
 
-    List<String> features;
+  @Enumerated(EnumType.STRING)
+  DurationUnit durationUnit; // DAY, MONTH
+
+  List<String> features;
 }

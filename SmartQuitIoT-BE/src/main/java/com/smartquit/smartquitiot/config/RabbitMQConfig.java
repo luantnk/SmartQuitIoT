@@ -12,39 +12,39 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.email.name}")
-    private String emailQueue;
+  @Value("${rabbitmq.queue.email.name}")
+  private String emailQueue;
 
-    @Value("${rabbitmq.exchange.email.name}")
-    private String emailExchange;
+  @Value("${rabbitmq.exchange.email.name}")
+  private String emailExchange;
 
-    @Value("${rabbitmq.routing.email.key}")
-    private String emailRoutingKey;
+  @Value("${rabbitmq.routing.email.key}")
+  private String emailRoutingKey;
 
-    @Bean
-    public Queue emailQueue() {
-        return new Queue(emailQueue);
-    }
+  @Bean
+  public Queue emailQueue() {
+    return new Queue(emailQueue);
+  }
 
-    @Bean
-    public TopicExchange emailExchange() {
-        return new TopicExchange(emailExchange);
-    }
+  @Bean
+  public TopicExchange emailExchange() {
+    return new TopicExchange(emailExchange);
+  }
 
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(emailRoutingKey);
-    }
+  @Bean
+  public Binding binding(Queue queue, TopicExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(emailRoutingKey);
+  }
 
-    @Bean
-    public MessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
-    }
+  @Bean
+  public MessageConverter converter() {
+    return new Jackson2JsonMessageConverter();
+  }
 
-    @Bean
-    public AmqpTemplate template(ConnectionFactory connectionFactory) {
-        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(converter());
-        return rabbitTemplate;
-    }
+  @Bean
+  public AmqpTemplate template(ConnectionFactory connectionFactory) {
+    final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    rabbitTemplate.setMessageConverter(converter());
+    return rabbitTemplate;
+  }
 }

@@ -2,13 +2,12 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.PostStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,32 +17,33 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Post {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    String title;
-    @Column(columnDefinition = "TEXT")
-    String content;
-    String thumbnail;
-    String description;
-    @CreationTimestamp
-    LocalDateTime createdAt;
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
+  String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", nullable = false)
-    Account account;
-    @Enumerated(EnumType.STRING)
-    PostStatus status = PostStatus.PUBLISHED;
+  @Column(columnDefinition = "TEXT")
+  String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true) // khi xóa bài post các con (media) xóa theo
-    List<PostMedia> media;
+  String thumbnail;
+  String description;
+  @CreationTimestamp LocalDateTime createdAt;
+  @UpdateTimestamp LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Comment> comments;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id", nullable = false)
+  Account account;
 
+  @Enumerated(EnumType.STRING)
+  PostStatus status = PostStatus.PUBLISHED;
 
+  @OneToMany(
+      mappedBy = "post",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true) // khi xóa bài post các con (media) xóa theo
+  List<PostMedia> media;
 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<Comment> comments;
 }

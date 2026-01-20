@@ -17,27 +17,26 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("phase")
 public class PhaseController {
-    private final PhaseService phaseService;
+  private final PhaseService phaseService;
 
-    @GetMapping("/home-page")
-    @PreAuthorize("hasRole('MEMBER')")
-    @Operation(summary = "Get information of current Phase at Home Page ")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<PhaseDTO> getCurrentPhaseAtHomePage() {
-        log.debug("REST request to get current phase for home page");
-        PhaseDTO response = phaseService.getCurrentPhaseAtHomePage();
-        return ResponseEntity.ok(response);
-    }
+  @GetMapping("/home-page")
+  @PreAuthorize("hasRole('MEMBER')")
+  @Operation(summary = "Get information of current Phase at Home Page ")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<PhaseDTO> getCurrentPhaseAtHomePage() {
+    log.debug("REST request to get current phase for home page");
+    PhaseDTO response = phaseService.getCurrentPhaseAtHomePage();
+    return ResponseEntity.ok(response);
+  }
 
-    @PostMapping("/redo")
-    @PreAuthorize("hasRole('MEMBER')")
-    @Operation(summary = "Member redo phase failed")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<QuitPlanResponse> redPhase(@RequestBody RedoPhaseRequest redoPhaseRequest) {
-        log.info("REST request to redo failed phase. PhaseID: {}",
-                redoPhaseRequest.getPhaseId());
-        QuitPlanResponse response = phaseService.redoPhaseInFailed(redoPhaseRequest);
-        log.info("Successfully processed redo request for PhaseID: {}", redoPhaseRequest.getPhaseId());
-        return ResponseEntity.ok(response);
-    }
+  @PostMapping("/redo")
+  @PreAuthorize("hasRole('MEMBER')")
+  @Operation(summary = "Member redo phase failed")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<QuitPlanResponse> redPhase(@RequestBody RedoPhaseRequest redoPhaseRequest) {
+    log.info("REST request to redo failed phase. PhaseID: {}", redoPhaseRequest.getPhaseId());
+    QuitPlanResponse response = phaseService.redoPhaseInFailed(redoPhaseRequest);
+    log.info("Successfully processed redo request for PhaseID: {}", redoPhaseRequest.getPhaseId());
+    return ResponseEntity.ok(response);
+  }
 }

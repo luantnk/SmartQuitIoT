@@ -2,12 +2,11 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.NewsStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -17,20 +16,22 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class News {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String title;
-    @Column(columnDefinition = "TEXT")
-    String content;
-    @Enumerated(EnumType.STRING)
-    NewsStatus status; // DRAFT, PUBLISHED, DELETED
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    String thumbnailUrl;
+  String title;
 
-    @CreationTimestamp
-    LocalDateTime createdAt;
+  @Column(columnDefinition = "TEXT")
+  String content;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy ="news")
-    List<NewsMedia> newsMedia;
+  @Enumerated(EnumType.STRING)
+  NewsStatus status; // DRAFT, PUBLISHED, DELETED
+
+  String thumbnailUrl;
+
+  @CreationTimestamp LocalDateTime createdAt;
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "news")
+  List<NewsMedia> newsMedia;
 }

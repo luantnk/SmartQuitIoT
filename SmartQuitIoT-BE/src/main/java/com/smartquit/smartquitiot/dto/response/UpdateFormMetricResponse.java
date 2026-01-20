@@ -12,7 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateFormMetricResponse {
-    FormMetricDTO formMetricDTO;
-    boolean alert; // because when updating it may be affect the FTND score of the Quit Plan. So I flagged this field to alert member hihi
-    int fntd_score;
+  FormMetricDTO formMetricDTO;
+  boolean
+      alert; // because when updating it may be affect the FTND score of the Quit Plan. So I flagged
+  // this field to alert member hihi
+  int fntd_score;
 }

@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TextToVoiceRequest {
-    private String text;
+  private String text;
 }

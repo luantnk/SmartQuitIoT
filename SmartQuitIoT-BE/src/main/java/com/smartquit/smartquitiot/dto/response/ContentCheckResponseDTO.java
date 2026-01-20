@@ -5,8 +5,9 @@ import lombok.Data;
 
 @Data
 public class ContentCheckResponseDTO {
-    @JsonProperty("isToxic")
-    private boolean isToxic;
-    private String type;
-    private String message;
+  @JsonProperty("isToxic")
+  private boolean isToxic;
+
+  private String type;
+  private String message;
 }

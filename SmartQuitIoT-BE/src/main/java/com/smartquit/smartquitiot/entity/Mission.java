@@ -6,14 +6,13 @@ import com.smartquit.smartquitiot.enums.MissionPhase;
 import com.smartquit.smartquitiot.enums.MissionStatus;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,35 +22,37 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Mission {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Column(unique = true)
-    String code;
-    String name;
-    String description;
-    @Enumerated(EnumType.STRING)
-    MissionPhase phase;
-    @Enumerated(EnumType.STRING)
-    MissionStatus status;
-    int exp;
-    @CreationTimestamp
-    LocalDateTime createdAt;
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Column(name = "condition_json", columnDefinition = "JSON")
-    @Type(JsonType.class)
-    private JsonNode condition;
+  @Column(unique = true)
+  String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    MissionType missionType;
+  String name;
+  String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    InterestCategory interestCategory;
+  @Enumerated(EnumType.STRING)
+  MissionPhase phase;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "mission")
-    List<PhaseDetailMission> phaseDetailMissions;
+  @Enumerated(EnumType.STRING)
+  MissionStatus status;
 
+  int exp;
+  @CreationTimestamp LocalDateTime createdAt;
+  @UpdateTimestamp LocalDateTime updatedAt;
+
+  @Column(name = "condition_json", columnDefinition = "JSON")
+  @Type(JsonType.class)
+  private JsonNode condition;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  MissionType missionType;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  InterestCategory interestCategory;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "mission")
+  List<PhaseDetailMission> phaseDetailMissions;
 }

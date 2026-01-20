@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class VoiceToTextResponse {
-    private String text;
-    private String status;
+  private String text;
+  private String status;
 }

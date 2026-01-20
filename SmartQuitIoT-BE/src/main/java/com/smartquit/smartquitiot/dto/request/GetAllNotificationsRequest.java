@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetAllNotificationsRequest {
-    Boolean isRead;
-    NotificationType type;
-    int page;
-    int size;
+  Boolean isRead;
+  NotificationType type;
+  int page;
+  int size;
 }

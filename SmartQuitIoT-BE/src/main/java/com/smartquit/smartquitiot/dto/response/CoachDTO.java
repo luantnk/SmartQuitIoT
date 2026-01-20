@@ -12,17 +12,17 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CoachDTO {
 
-    int id;
-    String email;
-    String firstName;
-    String lastName;
-    String avatarUrl;
-    String gender;
-    String certificateUrl;
-    int experienceYears;
-    String specializations;
-    String bio;
-    int ratingCount;
-    double ratingAvg;
-    AccountDTO account;
+  int id;
+  String email;
+  String firstName;
+  String lastName;
+  String avatarUrl;
+  String gender;
+  String certificateUrl;
+  int experienceYears;
+  String specializations;
+  String bio;
+  int ratingCount;
+  double ratingAvg;
+  AccountDTO account;
 }

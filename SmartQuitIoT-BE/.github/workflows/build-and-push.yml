@@ -1,39 +1,90 @@
-name: Build and Push Docker Image
+name: CI/CD Pipeline For Spring Boot Backend
 
 on:
   push:
     branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
     paths:
       - 'SmartQuitIoT-BE/**'
-      - '.github/workflows/build-and-push.yml'
+      - '.github/workflows/be-service.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-BE/**'
 
 env:
   REGISTRY: ghcr.io
+  # Appending -be to distinguish from the AI service
   IMAGE_NAME: ${{ github.repository }}-be
 
 jobs:
-  build-and-push:
+  # Unit Testing & formatting check
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: ./SmartQuitIoT-BE
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven
+          cache: 'maven'
 
+      # Optimizes dependency download time
+      - name: Resolve Dependencies
+        run: mvn dependency:go-offline
+
+      # Runs Unit Tests and Integration Tests
+      - name: Run Tests & Check Formatting
+        run: mvn clean verify
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+
+  # Build JAR, Scan, and Push Docker Image
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Lowercase Image Name
+        run: |
+          echo "IMAGE_NAME=${IMAGE_NAME,,}" >> $GITHUB_ENV
+
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Build the JAR
       - name: Build with Maven
-        run: mvn clean package
+        working-directory: ./SmartQuitIoT-BE
+        run: mvn package -DskipTests
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -42,26 +93,77 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
           tags: |
-            type=ref,event=branch
-            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,format=long
+            type=semver,pattern={{version}}
 
-          flavor: |
-            latest=true
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      # Build and Load locally for Scanning
+      - name: Build and load for scanning
+        uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./SmartQuitIoT-BE
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Security Scan
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          # If you want to ignore specific Java CVEs, create a .trivyignore file in BE folder
+          # trivyignores: ./SmartQuitIoT-BE/.trivyignore
+
+      # Final Push
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./SmartQuitIoT-BE
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-#          provenance: false
+
+  # 3. Notifications
+  notify:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [ test, build-and-push ]
+    steps:
+      - name: Discord Notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_BE }}
+          status: "${{ contains(needs.*.result, 'failure') && 'failure' || contains(needs.*.result, 'cancelled') && 'cancelled' || 'success' }}"
+          title: "CI/CD Pipeline Report - Backend Service"
+          content: "${{ contains(needs.*.result, 'failure') && format('Critical Alert: <@{0}> check logs immediately.', secrets.DISCORD_ALERT_ID) || 'Backend Deployment completed successfully.' }}"
+          description: |
+            **Build Metadata**
+            User: `${{ github.actor }}`
+            Branch: `${{ github.ref_name }}`
+            
+            **Execution Status**
+            ```text
+            JOB NAME          STATUS
+            --------------------------
+            Unit Testing      ${{ needs.test.result == 'success' && 'PASS' || 'FAIL' }}
+            Docker Build      ${{ needs.build-and-push.result == 'success' && 'PASS' || 'FAIL' }}
+            ```
+            [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          color: "${{ contains(needs.*.result, 'failure') && '0xFF0000' || '0x2EB67D' }}"
+          avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          username: "DevOps Bot"

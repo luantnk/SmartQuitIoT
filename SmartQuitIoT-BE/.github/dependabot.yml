@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # Configuration for Spring Boot Backend (Maven)
+  - package-ecosystem: "maven"
+    directory: "/SmartQuitIoT-BE" #
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    target-branch: "main"
+    labels:
+      - "backend"
+      - "dependencies"
+
+  # Configuration for AI Service (Pip)
+  - package-ecosystem: "pip"
+    directory: "/SmartQuitIoT-AI"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    target-branch: "main"
+    labels:
+      - "ai"
+      - "dependencies"
+
+  # Configuration for GitHub Actions (Maintain CI/CD versions)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"

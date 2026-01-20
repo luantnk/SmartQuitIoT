@@ -10,10 +10,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpcomingAppointmentDTO {
-    int appointmentId;
-    int memberId;
-    String memberName;
-    String memberAvatarUrl;
-    String time; // format: "HH:mm"
-    String status; // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+  int appointmentId;
+  int memberId;
+  String memberName;
+  String memberAvatarUrl;
+  String time; // format: "HH:mm"
+  String status; // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
 }

@@ -2,12 +2,11 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.MembershipSubscriptionStatus;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -17,21 +16,22 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MembershipSubscription {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Enumerated(EnumType.STRING)
-    MembershipSubscriptionStatus status; //PENDING, AVAILABLE, UNAVAILABLE, EXPIRED
-    LocalDate startDate;
-    LocalDate endDate;
-    long orderCode;
-    long totalAmount;
-    @CreationTimestamp
-    LocalDateTime createdAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Member member;
+  @Enumerated(EnumType.STRING)
+  MembershipSubscriptionStatus status; // PENDING, AVAILABLE, UNAVAILABLE, EXPIRED
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    MembershipPackage membershipPackage;
+  LocalDate startDate;
+  LocalDate endDate;
+  long orderCode;
+  long totalAmount;
+  @CreationTimestamp LocalDateTime createdAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  Member member;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  MembershipPackage membershipPackage;
 }

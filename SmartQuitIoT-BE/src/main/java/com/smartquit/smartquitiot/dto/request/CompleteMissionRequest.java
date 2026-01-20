@@ -1,9 +1,8 @@
 package com.smartquit.smartquitiot.dto.request;
 
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,8 +10,8 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompleteMissionRequest {
-    int phaseId;
-    int phaseDetailMissionId;
-    List<String> triggered;
-    String notes;
+  int phaseId;
+  int phaseDetailMissionId;
+  List<String> triggered;
+  String notes;
 }

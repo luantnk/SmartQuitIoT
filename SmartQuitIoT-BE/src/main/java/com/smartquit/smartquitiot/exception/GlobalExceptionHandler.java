@@ -2,6 +2,10 @@ package com.smartquit.smartquitiot.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -12,73 +16,71 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
-        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
+  @ExceptionHandler(RuntimeException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+    return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
 
-    @ExceptionHandler(JwtException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Map<String, String>> handleJwtException(JwtException ex) {
-        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.UNAUTHORIZED);
-    }
+  @ExceptionHandler(JwtException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<Map<String, String>> handleJwtException(JwtException ex) {
+    return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.UNAUTHORIZED);
+  }
 
-    @ExceptionHandler(AuthenticationServiceException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Map<String, String>> handleAuthenticationServiceException(AuthenticationServiceException ex) {
-        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.UNAUTHORIZED);
-    }
+  @ExceptionHandler(AuthenticationServiceException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<Map<String, String>> handleAuthenticationServiceException(
+      AuthenticationServiceException ex) {
+    return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.UNAUTHORIZED);
+  }
 
-    // ✅ Hợp nhất và sửa cú pháp hàm này
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(err -> {
-                    Object rejected = err.getRejectedValue();
-                    if ("FutureOrPresent".equals(err.getCode())) {
-                        return String.format("Ngày %s không hợp lệ — chỉ được chọn hôm nay hoặc tương lai", rejected);
-                    }
-                    return err.getDefaultMessage();
+  // ✅ Hợp nhất và sửa cú pháp hàm này
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException ex) {
+    List<String> errors =
+        ex.getBindingResult().getFieldErrors().stream()
+            .map(
+                err -> {
+                  Object rejected = err.getRejectedValue();
+                  if ("FutureOrPresent".equals(err.getCode())) {
+                    return String.format(
+                        "Ngày %s không hợp lệ — chỉ được chọn hôm nay hoặc tương lai", rejected);
+                  }
+                  return err.getDefaultMessage();
                 })
-                .toList();
+            .toList();
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("success", false);
-        body.put("message", errors.isEmpty() ? "Yêu cầu không hợp lệ" : errors.getFirst());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
+    Map<String, Object> body = new HashMap<>();
+    body.put("success", false);
+    body.put("message", errors.isEmpty() ? "Yêu cầu không hợp lệ" : errors.getFirst());
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+  }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.FORBIDDEN);
-    }
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+    return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.FORBIDDEN);
+  }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<Map<String, String>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
-        return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.FORBIDDEN);
-    }
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<Map<String, String>> handleAuthorizationDeniedException(
+      AuthorizationDeniedException ex) {
+    return new ResponseEntity<>(Map.of("message", ex.getMessage()), HttpStatus.FORBIDDEN);
+  }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolationException(ConstraintViolationException ex) {
-        List<String> messages = ex.getConstraintViolations()
-                .stream()
-                .map(ConstraintViolation::getMessage)
-                .toList();
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
+      ConstraintViolationException ex) {
+    List<String> messages =
+        ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).toList();
 
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("success", false);
-        errorResponse.put("message", messages.isEmpty() ? "Dữ liệu không hợp lệ" : messages.getFirst());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+    Map<String, Object> errorResponse = new HashMap<>();
+    errorResponse.put("success", false);
+    errorResponse.put("message", messages.isEmpty() ? "Dữ liệu không hợp lệ" : messages.getFirst());
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
 }

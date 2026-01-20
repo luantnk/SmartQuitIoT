@@ -11,27 +11,21 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(
-                title = "SmartQuitIoT API",
-                version = "1.0",
-                description = "Capstone Project",
-                contact = @Contact(
-                        name = "SmartQuitIoT Team",
-                        email = "admin@smartquit.io.vn"
-                )
-        ),
-        servers = {
-                @Server(url = "https://server.smartquitiot.website/api", description = " Server deployment"),
-                @Server(url = "http://localhost:8080/api", description = "Local Development Server")
-        }
-)
+    info =
+        @Info(
+            title = "SmartQuitIoT API",
+            version = "1.0",
+            description = "Capstone Project",
+            contact = @Contact(name = "SmartQuitIoT Team", email = "admin@smartquit.io.vn")),
+    servers = {
+      @Server(url = "https://server.smartquitiot.website/api", description = " Server deployment"),
+      @Server(url = "http://localhost:8080/api", description = "Local Development Server")
+    })
 @SecurityScheme(
-        name = "Bearer Authentication",
-        description = "JWT Token Authentication",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER
-)
-public class SwaggerConfig {
-}
+    name = "Bearer Authentication",
+    description = "JWT Token Authentication",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    in = SecuritySchemeIn.HEADER)
+public class SwaggerConfig {}

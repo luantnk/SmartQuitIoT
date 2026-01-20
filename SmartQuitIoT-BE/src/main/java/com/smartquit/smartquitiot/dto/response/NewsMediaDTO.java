@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsMediaDTO {
-    Integer id;
-    String mediaUrl;
-    MediaType mediaType;
+  Integer id;
+  String mediaUrl;
+  MediaType mediaType;
 }

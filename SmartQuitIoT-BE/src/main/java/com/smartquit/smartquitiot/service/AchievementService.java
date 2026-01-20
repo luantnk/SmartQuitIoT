@@ -6,12 +6,13 @@ import org.springframework.data.domain.Page;
 
 public interface AchievementService {
 
-    Page<AchievementDTO> getAllAchievements(int page, int size, String search);
-    AchievementDTO getAchievementById(int id);
+  Page<AchievementDTO> getAllAchievements(int page, int size, String search);
 
-    AchievementDTO createAchievement(CreateAchievementRequest request);
+  AchievementDTO getAchievementById(int id);
 
-    AchievementDTO deleteAchievement(int id);
+  AchievementDTO createAchievement(CreateAchievementRequest request);
 
-    AchievementDTO updateAchievement(int id, CreateAchievementRequest request);
+  AchievementDTO deleteAchievement(int id);
+
+  AchievementDTO updateAchievement(int id, CreateAchievementRequest request);
 }

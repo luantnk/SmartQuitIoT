@@ -21,85 +21,92 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final AccountService accountService;
+  private final AccountService accountService;
 
-    @PostMapping("/register")
-    @Operation(summary = "This endpoint for register new member account")
-    public ResponseEntity<MemberDTO> registerMemberAccount(@RequestBody @Valid MemberAccountRequest request){
-        return new ResponseEntity<>(accountService.registerMember(request), HttpStatus.CREATED);
-    }
+  @PostMapping("/register")
+  @Operation(summary = "This endpoint for register new member account")
+  public ResponseEntity<MemberDTO> registerMemberAccount(
+      @RequestBody @Valid MemberAccountRequest request) {
+    return new ResponseEntity<>(accountService.registerMember(request), HttpStatus.CREATED);
+  }
 
-    @PostMapping("/coach/create")
-    @Operation(summary = "This endpoint for create new coach account")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CoachDTO> createCoachAccount(@RequestBody @Valid CoachAccountRequest request){
-        return new ResponseEntity<>(accountService.registerCoach(request), HttpStatus.CREATED);
-    }
+  @PostMapping("/coach/create")
+  @Operation(summary = "This endpoint for create new coach account")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<CoachDTO> createCoachAccount(
+      @RequestBody @Valid CoachAccountRequest request) {
+    return new ResponseEntity<>(accountService.registerCoach(request), HttpStatus.CREATED);
+  }
 
-    @GetMapping("/p")
-    @Operation(summary = "This endpoint for get authenticated account")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Account> getAuthenticatedAccount(){
-        return ResponseEntity.ok(accountService.getAuthenticatedAccount());
-    }
+  @GetMapping("/p")
+  @Operation(summary = "This endpoint for get authenticated account")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<Account> getAuthenticatedAccount() {
+    return ResponseEntity.ok(accountService.getAuthenticatedAccount());
+  }
 
-    @PostMapping("/password/forgot")
-    @Operation(summary = "Request a password reset OTP")
-    public ResponseEntity<MessageResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        accountService.forgotPassword(request.getEmail());
-        return ResponseEntity.ok(new MessageResponse("An OTP has been sent to your email. Please check."));
-    }
+  @PostMapping("/password/forgot")
+  @Operation(summary = "Request a password reset OTP")
+  public ResponseEntity<MessageResponse> forgotPassword(
+      @RequestBody ForgotPasswordRequest request) {
+    accountService.forgotPassword(request.getEmail());
+    return ResponseEntity.ok(
+        new MessageResponse("An OTP has been sent to your email. Please check."));
+  }
 
-    @PutMapping("/password/update")
-    @Operation(summary = "Update account password")
-    public ResponseEntity<MessageResponse> updatePassword(@RequestBody ChangePasswordRequest request) {
-        accountService.updatePassword(request);
-        return ResponseEntity.ok(new MessageResponse("Password has been changed successfully."));
-    }
+  @PutMapping("/password/update")
+  @Operation(summary = "Update account password")
+  public ResponseEntity<MessageResponse> updatePassword(
+      @RequestBody ChangePasswordRequest request) {
+    accountService.updatePassword(request);
+    return ResponseEntity.ok(new MessageResponse("Password has been changed successfully."));
+  }
 
-    @PostMapping("/verify-otp")
-    @Operation(summary = "Verify OTP and get a reset token")
-    public ResponseEntity<VerifyOtpResponse> verifyOtp(@RequestBody VerifyOtpRequest request) {
-        VerifyOtpResponse response = accountService.verifyOtp(request);
-        return ResponseEntity.ok(response);
-    }
+  @PostMapping("/verify-otp")
+  @Operation(summary = "Verify OTP and get a reset token")
+  public ResponseEntity<VerifyOtpResponse> verifyOtp(@RequestBody VerifyOtpRequest request) {
+    VerifyOtpResponse response = accountService.verifyOtp(request);
+    return ResponseEntity.ok(response);
+  }
 
-    @PostMapping("/reset")
-    @Operation(summary = "Reset password using the reset token")
-    public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        accountService.resetPassword(request);
-        return ResponseEntity.ok(new MessageResponse("Your password has been reset successfully."));
-    }
+  @PostMapping("/reset")
+  @Operation(summary = "Reset password using the reset token")
+  public ResponseEntity<MessageResponse> resetPassword(
+      @Valid @RequestBody ResetPasswordRequest request) {
+    accountService.resetPassword(request);
+    return ResponseEntity.ok(new MessageResponse("Your password has been reset successfully."));
+  }
 
-    @GetMapping("/statistics")
-    @Operation(summary = "Get account statistics")
-    public ResponseEntity<?> getAccountStatistics() {
-        return ResponseEntity.ok(accountService.getAccountStatistics());
-    }
+  @GetMapping("/statistics")
+  @Operation(summary = "Get account statistics")
+  public ResponseEntity<?> getAccountStatistics() {
+    return ResponseEntity.ok(accountService.getAccountStatistics());
+  }
 
-    @PutMapping("/activate/{accountId}")
-    @Operation(summary = "Activate account by ID")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> activateAccountById(@PathVariable int accountId) {
-        return ResponseEntity.ok(accountService.activeAccountById(accountId));
-    }
+  @PutMapping("/activate/{accountId}")
+  @Operation(summary = "Activate account by ID")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> activateAccountById(@PathVariable int accountId) {
+    return ResponseEntity.ok(accountService.activeAccountById(accountId));
+  }
 
-    @PutMapping("/delete/{accountId}")
-    @Operation(summary = "Ban account by ID")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteAccountById(@PathVariable int accountId) {
-        return ResponseEntity.ok(accountService.deleteAccountById(accountId));
-    }
+  @PutMapping("/delete/{accountId}")
+  @Operation(summary = "Ban account by ID")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> deleteAccountById(@PathVariable int accountId) {
+    return ResponseEntity.ok(accountService.deleteAccountById(accountId));
+  }
 
-    @PutMapping("/admin/reset-password/{accountId}")
-    @Operation(summary = "Admin reset account password by ID")
-//    @SecurityRequirement(name = "Bearer Authentication")
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> adminResetAccountPassword(@PathVariable int accountId, @RequestBody ChangePasswordRequest request) {
-        accountService.resetAccountPassword(accountId, request.getNewPassword());
-        return ResponseEntity.ok(new MessageResponse("Account password has been reset successfully."));
-    }
+  @PutMapping("/admin/reset-password/{accountId}")
+  @Operation(summary = "Admin reset account password by ID")
+  //    @SecurityRequirement(name = "Bearer Authentication")
+  //    @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> adminResetAccountPassword(
+      @PathVariable int accountId, @RequestBody ChangePasswordRequest request) {
+    accountService.resetAccountPassword(accountId, request.getNewPassword());
+    return ResponseEntity.ok(new MessageResponse("Account password has been reset successfully."));
+  }
 }

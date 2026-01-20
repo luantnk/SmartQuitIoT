@@ -2,10 +2,9 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.ReminderQueueStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,26 +14,25 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReminderQueue {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Column(columnDefinition = "TEXT")
-    String content;
+  @Column(columnDefinition = "TEXT")
+  String content;
 
-//    @Type(JsonType.class)
-//    @Column(name = "payload_json", columnDefinition = "JSON", nullable = false)
-//    JsonNode payload;
+  //    @Type(JsonType.class)
+  //    @Column(name = "payload_json", columnDefinition = "JSON", nullable = false)
+  //    JsonNode payload;
 
-    @Enumerated(EnumType.STRING)
-    ReminderQueueStatus status;
+  @Enumerated(EnumType.STRING)
+  ReminderQueueStatus status;
 
-    LocalDateTime scheduledAt;
+  LocalDateTime scheduledAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    ReminderTemplate reminderTemplate;
+  @ManyToOne(fetch = FetchType.LAZY)
+  ReminderTemplate reminderTemplate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    PhaseDetail phaseDetail;
-
+  @ManyToOne(fetch = FetchType.LAZY)
+  PhaseDetail phaseDetail;
 }

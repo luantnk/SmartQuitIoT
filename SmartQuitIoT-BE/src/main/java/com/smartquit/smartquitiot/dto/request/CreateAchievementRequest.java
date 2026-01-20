@@ -11,18 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAchievementRequest {
-    @NotBlank(message = "Achievement name is required")
-    private String name;
+  @NotBlank(message = "Achievement name is required")
+  private String name;
 
-    @NotBlank(message = "Description is required")
-    private String description;
+  @NotBlank(message = "Description is required")
+  private String description;
 
-    @NotBlank(message = "Icon URL is required")
-    private String icon;
+  @NotBlank(message = "Icon URL is required")
+  private String icon;
 
-    @NotBlank(message = "Achievement type is required")
-    private String type; // STREAK, ACTIVITY, FINANCE, SOCIAL, PROGRESS
+  @NotBlank(message = "Achievement type is required")
+  private String type; // STREAK, ACTIVITY, FINANCE, SOCIAL, PROGRESS
 
-    @NotNull(message = "Condition is required")
-    private JsonNode condition;
+  @NotNull(message = "Condition is required")
+  private JsonNode condition;
 }

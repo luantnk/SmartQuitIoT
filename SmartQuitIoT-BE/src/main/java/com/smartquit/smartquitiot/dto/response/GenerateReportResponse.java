@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class GenerateReportResponse {
-    private String status;
+  private String status;
 
-    @JsonProperty("image_base64")
-    private String imageBase64;
+  @JsonProperty("image_base64")
+  private String imageBase64;
 }

@@ -2,10 +2,9 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.CoachWorkScheduleStatus;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -15,19 +14,18 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CoachWorkSchedule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    LocalDate date;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Enumerated(EnumType.STRING)
-    CoachWorkScheduleStatus status; //AVAILABLE,BOOKED,UNAVAILABLE
+  LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Slot slot;
+  @Enumerated(EnumType.STRING)
+  CoachWorkScheduleStatus status; // AVAILABLE,BOOKED,UNAVAILABLE
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Coach coach;
+  @ManyToOne(fetch = FetchType.LAZY)
+  Slot slot;
 
-
+  @ManyToOne(fetch = FetchType.LAZY)
+  Coach coach;
 }

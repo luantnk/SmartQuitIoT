@@ -9,19 +9,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PaymentMapper {
 
-    private final MemberMapper memberMapper;
-    private final MembershipSubscriptionMapper membershipSubscriptionMapper;
+  private final MemberMapper memberMapper;
+  private final MembershipSubscriptionMapper membershipSubscriptionMapper;
 
-    public PaymentDTO toDTO(Payment payment) {
-        PaymentDTO paymentDTO = new PaymentDTO();
-        paymentDTO.setId(payment.getId());
-        paymentDTO.setOrderCode(payment.getOrderCode());
-        paymentDTO.setPaymentLinkId(payment.getPaymentLinkId());
-        paymentDTO.setCreatedAt(payment.getCreatedAt());
-        paymentDTO.setAmount(payment.getAmount());
-        paymentDTO.setStatus(payment.getStatus());
-        paymentDTO.setMember(memberMapper.toMemberPayment(payment.getSubscription().getMember()));
-        paymentDTO.setSubscription(membershipSubscriptionMapper.toMembershipSubscriptionPayment(payment.getSubscription()));
-        return paymentDTO;
-    }
+  public PaymentDTO toDTO(Payment payment) {
+    PaymentDTO paymentDTO = new PaymentDTO();
+    paymentDTO.setId(payment.getId());
+    paymentDTO.setOrderCode(payment.getOrderCode());
+    paymentDTO.setPaymentLinkId(payment.getPaymentLinkId());
+    paymentDTO.setCreatedAt(payment.getCreatedAt());
+    paymentDTO.setAmount(payment.getAmount());
+    paymentDTO.setStatus(payment.getStatus());
+    paymentDTO.setMember(memberMapper.toMemberPayment(payment.getSubscription().getMember()));
+    paymentDTO.setSubscription(
+        membershipSubscriptionMapper.toMembershipSubscriptionPayment(payment.getSubscription()));
+    return paymentDTO;
+  }
 }

@@ -17,15 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StatisticsController {
 
-    private final StatisticsService statisticsService;
+  private final StatisticsService statisticsService;
 
-    @GetMapping("/dashboard")
-    @PreAuthorize("hasAnyRole('COACH')")
-    @Operation(summary = "Get dashboard statistics", 
-               description = "Returns statistics for appointments and members including today's appointments, pending requests, completed this week, active members, and upcoming appointments")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<GlobalResponse<DashboardStatisticsDTO>> getDashboardStatistics() {
-        DashboardStatisticsDTO statistics = statisticsService.getDashboardStatistics();
-        return ResponseEntity.ok(GlobalResponse.ok("Dashboard statistics fetched successfully", statistics));
-    }
+  @GetMapping("/dashboard")
+  @PreAuthorize("hasAnyRole('COACH')")
+  @Operation(
+      summary = "Get dashboard statistics",
+      description =
+          "Returns statistics for appointments and members including today's appointments, pending"
+              + " requests, completed this week, active members, and upcoming appointments")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<GlobalResponse<DashboardStatisticsDTO>> getDashboardStatistics() {
+    DashboardStatisticsDTO statistics = statisticsService.getDashboardStatistics();
+    return ResponseEntity.ok(
+        GlobalResponse.ok("Dashboard statistics fetched successfully", statistics));
+  }
 }

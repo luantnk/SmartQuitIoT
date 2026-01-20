@@ -13,13 +13,16 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentMedia {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Enumerated(EnumType.STRING)
-    MediaType mediaType;
-    String mediaUrl;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    Comment comment;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
+
+  @Enumerated(EnumType.STRING)
+  MediaType mediaType;
+
+  String mediaUrl;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = false)
+  Comment comment;
 }

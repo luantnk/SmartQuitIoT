@@ -1,10 +1,9 @@
 package com.smartquit.smartquitiot.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,27 +13,27 @@ import java.util.List;
 @ToString
 public class PostCreateRequest {
 
-    @NotBlank(message = "Title is required")
-    String title;
+  @NotBlank(message = "Title is required")
+  String title;
 
-    String description;
+  String description;
 
-    @NotBlank(message = "Content is required")
-    String content;
+  @NotBlank(message = "Content is required")
+  String content;
 
-    String thumbnail;
+  String thumbnail;
 
-    List<PostMediaRequest> media;
+  List<PostMediaRequest> media;
 
-//    Integer accountId;
+  //    Integer accountId;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    public static class PostMediaRequest {
-        String mediaUrl;
-        String mediaType; // IMAGE, VIDEO, AUDIO,...
-    }
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  @FieldDefaults(level = AccessLevel.PRIVATE)
+  public static class PostMediaRequest {
+    String mediaUrl;
+    String mediaType; // IMAGE, VIDEO, AUDIO,...
+  }
 }

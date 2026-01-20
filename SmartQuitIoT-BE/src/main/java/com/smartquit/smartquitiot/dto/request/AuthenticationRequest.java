@@ -11,9 +11,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationRequest {
 
-    @NotEmpty(message = "Invalid username/email or password")
-    String usernameOrEmail;
-    @NotEmpty(message = "Invalid username/email or password")
-    String password;
+  @NotEmpty(message = "Invalid username/email or password")
+  String usernameOrEmail;
 
+  @NotEmpty(message = "Invalid username/email or password")
+  String password;
 }

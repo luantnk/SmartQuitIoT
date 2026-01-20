@@ -1,22 +1,25 @@
 package com.smartquit.smartquitiot.repository;
 
 import com.smartquit.smartquitiot.entity.DiaryRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DiaryRecordRepository extends JpaRepository<DiaryRecord, Integer> {
 
-    Optional<DiaryRecord> findByDateAndMemberId(LocalDate date, Integer memberId);
+  Optional<DiaryRecord> findByDateAndMemberId(LocalDate date, Integer memberId);
 
-    List<DiaryRecord> findByMemberId(Integer memberId);
+  List<DiaryRecord> findByMemberId(Integer memberId);
 
-    List<DiaryRecord> findByMemberIdOrderByDateDesc(Integer memberId);
+  List<DiaryRecord> findByMemberIdOrderByDateDesc(Integer memberId);
 
-    Optional<DiaryRecord> findTopByMemberIdOrderByDateDesc(Integer memberId);
-    Optional<DiaryRecord> findTopByMemberIdAndHaveSmokedIsTrueOrderByDateDesc(Integer memberId);
-    Optional<DiaryRecord> findFirstByMember_IdOrderByDateDesc(Integer memberId);
-    List<DiaryRecord> findByMemberIdAndDateBetweenOrderByDateAsc(int memberId, LocalDate startDate, LocalDate endDate);
+  Optional<DiaryRecord> findTopByMemberIdOrderByDateDesc(Integer memberId);
+
+  Optional<DiaryRecord> findTopByMemberIdAndHaveSmokedIsTrueOrderByDateDesc(Integer memberId);
+
+  Optional<DiaryRecord> findFirstByMember_IdOrderByDateDesc(Integer memberId);
+
+  List<DiaryRecord> findByMemberIdAndDateBetweenOrderByDateAsc(
+      int memberId, LocalDate startDate, LocalDate endDate);
 }

@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MembershipPaymentRequest {
-    int membershipPackageId;
-    int duration;
+  int membershipPackageId;
+  int duration;
 }

@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetFormMetricResponse {
-    FormMetricDTO formMetricDTO;
-    int ftnd_score;
+  FormMetricDTO formMetricDTO;
+  int ftnd_score;
 }

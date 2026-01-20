@@ -11,9 +11,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentProcessRequest {
 
-    String code;
-    String id;
-    Boolean cancel;
-    PaymentStatus status;
-    Long orderCode;
+  String code;
+  String id;
+  Boolean cancel;
+  PaymentStatus status;
+  Long orderCode;
 }

@@ -5,11 +5,10 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -18,14 +17,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ScheduleAssignRequest {
 
-    @NotEmpty(message = "dates must not be empty")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    List<
-            @NotNull(message = "date must not be null")
-            @FutureOrPresent(message = "date must be today or in the future")
-                    LocalDate
-            > dates;
+  @NotEmpty(message = "dates must not be empty")
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  List<
+          @NotNull(message = "date must not be null")
+          @FutureOrPresent(message = "date must be today or in the future") LocalDate>
+      dates;
 
-    @NotEmpty(message = "coachIds must not be empty")
-    List<@NotNull @Positive Integer> coachIds;
+  @NotEmpty(message = "coachIds must not be empty")
+  List<@NotNull @Positive Integer> coachIds;
 }

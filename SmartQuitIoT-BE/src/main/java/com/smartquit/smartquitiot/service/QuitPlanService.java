@@ -7,17 +7,24 @@ import com.smartquit.smartquitiot.dto.response.AiPredictionResponse;
 import com.smartquit.smartquitiot.dto.response.PhaseBatchMissionsResponse;
 import com.smartquit.smartquitiot.dto.response.QuitPlanResponse;
 import com.smartquit.smartquitiot.dto.response.TimeResponse;
-
 import java.util.List;
 
 public interface QuitPlanService {
-     PhaseBatchMissionsResponse createQuitPlanInFirstLogin(CreateQuitPlanInFirstLoginRequest req);
-     QuitPlanResponse getCurrentQuitPlan();
-     TimeResponse getCurrentTimeOfQuitPlan();
-     QuitPlanResponse getMemberQuitPlan(int memberId);
-     QuitPlanResponse keepPhaseOfQuitPlan(KeepPhaseOfQuitPlanRequest request);
-    PhaseBatchMissionsResponse createNewQuitPlan(CreateNewQuitPlanRequest req);
-    List<QuitPlanResponse> getHistory();
-    QuitPlanResponse getSpecific(int id);
-    AiPredictionResponse getPredictionForCurrentPlan();
+  PhaseBatchMissionsResponse createQuitPlanInFirstLogin(CreateQuitPlanInFirstLoginRequest req);
+
+  QuitPlanResponse getCurrentQuitPlan();
+
+  TimeResponse getCurrentTimeOfQuitPlan();
+
+  QuitPlanResponse getMemberQuitPlan(int memberId);
+
+  QuitPlanResponse keepPhaseOfQuitPlan(KeepPhaseOfQuitPlanRequest request);
+
+  PhaseBatchMissionsResponse createNewQuitPlan(CreateNewQuitPlanRequest req);
+
+  List<QuitPlanResponse> getHistory();
+
+  QuitPlanResponse getSpecific(int id);
+
+  AiPredictionResponse getPredictionForCurrentPlan();
 }

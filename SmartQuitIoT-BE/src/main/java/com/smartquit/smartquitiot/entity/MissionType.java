@@ -1,10 +1,9 @@
 package com.smartquit.smartquitiot.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -14,12 +13,13 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MissionType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String name;
-    String description;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "missionType")
-    List<Mission> missions;
+  String name;
+  String description;
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "missionType")
+  List<Mission> missions;
 }

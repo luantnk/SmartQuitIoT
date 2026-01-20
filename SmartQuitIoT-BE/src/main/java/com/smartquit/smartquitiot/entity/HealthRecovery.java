@@ -3,11 +3,10 @@ package com.smartquit.smartquitiot.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.smartquit.smartquitiot.enums.HealthRecoveryDataName;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -16,21 +15,23 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HealthRecovery {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @Enumerated(EnumType.STRING)
-    HealthRecoveryDataName name;
-    @Column(precision = 5, scale = 2)
-    BigDecimal value;
-    String description;
-    LocalDateTime timeTriggered;//thời gian bắt đầu
-    double recoveryTime;//thời gian để hồi phục đơn vị là phút
-    //targetTime = timeTriggered + recoveryTime
-    LocalDateTime targetTime;//thời gian mục tiêu hồi phục được
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    Member member;
+  @Enumerated(EnumType.STRING)
+  HealthRecoveryDataName name;
+
+  @Column(precision = 5, scale = 2)
+  BigDecimal value;
+
+  String description;
+  LocalDateTime timeTriggered; // thời gian bắt đầu
+  double recoveryTime; // thời gian để hồi phục đơn vị là phút
+  // targetTime = timeTriggered + recoveryTime
+  LocalDateTime targetTime; // thời gian mục tiêu hồi phục được
+
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  Member member;
 }
-

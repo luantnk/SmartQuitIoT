@@ -20,26 +20,28 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class ReminderTemplateServiceImpl implements ReminderTemplateService {
-    private final ReminderTemplateRepository reminderTemplateRepository;
-    private final ReminderTemplateMapper reminderTemplateMapper;
-    @Override
-    public Page<ReminderTemplateDTO> getAllReminderTemplate(int page, int size, String search) {
-        Pageable pageRequest = PageRequest.of(page, size, Sort.by("updatedAt").descending());
-        Specification<ReminderTemplate> spec = Specification.allOf(
-                ReminderTemplateSpecification.hasSearchString(search)
-        );
-        Page<ReminderTemplate> reminderTemplates = reminderTemplateRepository.findAll(spec, pageRequest);
+  private final ReminderTemplateRepository reminderTemplateRepository;
+  private final ReminderTemplateMapper reminderTemplateMapper;
 
-        return reminderTemplates.map(reminderTemplateMapper::toReminderTemplateDTO);
-    }
+  @Override
+  public Page<ReminderTemplateDTO> getAllReminderTemplate(int page, int size, String search) {
+    Pageable pageRequest = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+    Specification<ReminderTemplate> spec =
+        Specification.allOf(ReminderTemplateSpecification.hasSearchString(search));
+    Page<ReminderTemplate> reminderTemplates =
+        reminderTemplateRepository.findAll(spec, pageRequest);
 
-    @Override
-    public ReminderTemplateDTO updateContent(int id, UpdateReminderTemplateRequest request) {
-       ReminderTemplate reminderTemplate = reminderTemplateRepository.findById(id)
-               .orElseThrow(() -> new RuntimeException("Reminder Template not found"));
-        reminderTemplate.setContent(request.getContent());
-        return reminderTemplateMapper.toReminderTemplateDTO(reminderTemplateRepository.save(reminderTemplate));
-    }
+    return reminderTemplates.map(reminderTemplateMapper::toReminderTemplateDTO);
+  }
 
-
+  @Override
+  public ReminderTemplateDTO updateContent(int id, UpdateReminderTemplateRequest request) {
+    ReminderTemplate reminderTemplate =
+        reminderTemplateRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Reminder Template not found"));
+    reminderTemplate.setContent(request.getContent());
+    return reminderTemplateMapper.toReminderTemplateDTO(
+        reminderTemplateRepository.save(reminderTemplate));
+  }
 }

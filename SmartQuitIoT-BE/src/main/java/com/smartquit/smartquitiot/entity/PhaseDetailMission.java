@@ -2,10 +2,9 @@ package com.smartquit.smartquitiot.entity;
 
 import com.smartquit.smartquitiot.enums.PhaseDetailMissionStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,20 +14,21 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PhaseDetailMission {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String code;
-    String name;
-    String description;
-    LocalDateTime completedAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Enumerated(EnumType.STRING)
-    PhaseDetailMissionStatus  status = PhaseDetailMissionStatus.INCOMPLETED;
+  String code;
+  String name;
+  String description;
+  LocalDateTime completedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    PhaseDetail phaseDetail;
+  @Enumerated(EnumType.STRING)
+  PhaseDetailMissionStatus status = PhaseDetailMissionStatus.INCOMPLETED;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Mission mission;
+  @ManyToOne(fetch = FetchType.LAZY)
+  PhaseDetail phaseDetail;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  Mission mission;
 }

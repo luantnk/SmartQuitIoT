@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackRequest {
-    @NotNull
-    @Min(1)
-    @Max(5)
-    private Integer star;
+  @NotNull
+  @Min(1)
+  @Max(5)
+  private Integer star;
 
-    private String content;
+  private String content;
 }

@@ -10,13 +10,15 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CoachUpdateRequest {
-    @NotEmpty(message = "FirstName is required")
-    String firstName;
-    @NotEmpty(message = "LastName is required")
-    String lastName;
-    String avatarUrl;
-    String certificateUrl;
-    String bio;
-    int experienceYears;
-    String specializations;
+  @NotEmpty(message = "FirstName is required")
+  String firstName;
+
+  @NotEmpty(message = "LastName is required")
+  String lastName;
+
+  String avatarUrl;
+  String certificateUrl;
+  String bio;
+  int experienceYears;
+  String specializations;
 }

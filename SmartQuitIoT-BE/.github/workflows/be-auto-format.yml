@@ -1,0 +1,40 @@
+name: Format Java Code
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'SmartQuitIoT-BE/**'
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./SmartQuitIoT-BE
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Grant execute permission for gradlew/mvnw
+        run: chmod +x mvnw
+
+      - name: Apply Spotless Formatting
+        run: ./mvnw spotless:apply
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-format java code with spotless"
+          file_pattern: 'SmartQuitIoT-BE/src/**/*.java'

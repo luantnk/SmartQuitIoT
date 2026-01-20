@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SlotReseedResponse {
-    int createdCount;    // Số slots mới được tạo
-    int deletedCount;    // Số orphan slots bị xóa
-    int totalSlots;      // Tổng số slots hiện tại
+  int createdCount; // Số slots mới được tạo
+  int deletedCount; // Số orphan slots bị xóa
+  int totalSlots; // Tổng số slots hiện tại
 }
-

@@ -1,23 +1,22 @@
 package com.smartquit.smartquitiot.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Builder
 public class GenerateReportRequest {
-    @JsonProperty("member_name")
-    private String memberName;
+  @JsonProperty("member_name")
+  private String memberName;
 
-    @JsonProperty("start_date")
-    private String startDate;
+  @JsonProperty("start_date")
+  private String startDate;
 
-    @JsonProperty("end_date")
-    private String endDate;
+  @JsonProperty("end_date")
+  private String endDate;
 
-    @JsonProperty("logs")
-    private List<AIDailyLog> logs;
+  @JsonProperty("logs")
+  private List<AIDailyLog> logs;
 }

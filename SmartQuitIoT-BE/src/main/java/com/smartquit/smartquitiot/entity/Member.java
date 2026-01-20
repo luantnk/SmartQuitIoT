@@ -5,14 +5,13 @@ import com.smartquit.smartquitiot.enums.Gender;
 import com.smartquit.smartquitiot.validator.DobConstraint;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "member")
@@ -23,41 +22,46 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    @NotEmpty(message = "FirstName is required")
-    String firstName;
-    @NotEmpty(message = "LastName is required")
-    String lastName;
-    String avatarUrl;
-    @Enumerated(EnumType.STRING)
-    Gender gender;
-    @DobConstraint(min = 14, message = "Member must greater than 14 years old")
-    LocalDate dob;
-    boolean isUsedFreeTrial = false;
-    @UpdateTimestamp
-    LocalDateTime modifiedAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id")
-    Account account;
+  @NotEmpty(message = "FirstName is required")
+  String firstName;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "member")
-    List<QuitPlan> quitPlans;
+  @NotEmpty(message = "LastName is required")
+  String lastName;
 
+  String avatarUrl;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "member")
-    List<HealthRecovery> healthRecoveries;
+  @Enumerated(EnumType.STRING)
+  Gender gender;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    Metric metric;
- //default
-    LocalTime morningReminderTime = LocalTime.of(7, 0);  // 07:00
-    LocalTime quietStart = LocalTime.of(22, 0);         // 22:00
-    LocalTime quietEnd = LocalTime.of(6, 0);            // 06:00
-    String timeZone = "Asia/Ho_Chi_Minh";
+  @DobConstraint(min = 14, message = "Member must greater than 14 years old")
+  LocalDate dob;
+
+  boolean isUsedFreeTrial = false;
+  @UpdateTimestamp LocalDateTime modifiedAt;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "account_id")
+  Account account;
+
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "member")
+  List<QuitPlan> quitPlans;
+
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "member")
+  List<HealthRecovery> healthRecoveries;
+
+  @JsonIgnore
+  @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  Metric metric;
+
+  // default
+  LocalTime morningReminderTime = LocalTime.of(7, 0); // 07:00
+  LocalTime quietStart = LocalTime.of(22, 0); // 22:00
+  LocalTime quietEnd = LocalTime.of(6, 0); // 06:00
+  String timeZone = "Asia/Ho_Chi_Minh";
 }

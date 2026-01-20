@@ -4,7 +4,8 @@ import com.smartquit.smartquitiot.dto.request.UpdateFormMetricRequest;
 import com.smartquit.smartquitiot.dto.response.GetFormMetricResponse;
 import com.smartquit.smartquitiot.dto.response.UpdateFormMetricResponse;
 
-public interface FormMetricService{
-    GetFormMetricResponse getMyFormMetric();
-    UpdateFormMetricResponse updateMyFormMetric(UpdateFormMetricRequest req);
+public interface FormMetricService {
+  GetFormMetricResponse getMyFormMetric();
+
+  UpdateFormMetricResponse updateMyFormMetric(UpdateFormMetricRequest req);
 }

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PhaseDetailMissionPlanToolDTO {
-    int id;
-    String code;
-    String name;
-    String description;
+  int id;
+  String code;
+  String name;
+  String description;
 }

@@ -4,16 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.smartquit.smartquitiot.enums.PhaseStatus;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "phase")
@@ -23,55 +22,55 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Phase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    String name;
-    LocalDate startDate;
-    LocalDate endDate;
-    int durationDays;
-    int totalMissions;
-    int completedMissions;
-    @Column(precision = 5, scale = 2)
-    LocalDateTime completedAt;
-    boolean keepPhase = false;
-    boolean redo = false; // phase này được chọn làm lại
+  String name;
+  LocalDate startDate;
+  LocalDate endDate;
+  int durationDays;
+  int totalMissions;
+  int completedMissions;
 
-    //condition phase
-    BigDecimal progress;
-    double avgCravingLevel;
-    double avgCigarettesPerDay;
-    double avgMood;
-    double avgAnxiety;
-    double avgConfidentLevel;
-    //double fm_cigarettes_total;
+  @Column(precision = 5, scale = 2)
+  LocalDateTime completedAt;
 
+  boolean keepPhase = false;
+  boolean redo = false; // phase này được chọn làm lại
 
-    @Column(name = "condition_json", columnDefinition = "JSON", nullable = false)
-    @Type(JsonType.class)
-    JsonNode condition;
+  // condition phase
+  BigDecimal progress;
+  double avgCravingLevel;
+  double avgCigarettesPerDay;
+  double avgMood;
+  double avgAnxiety;
+  double avgConfidentLevel;
 
-    @Column(columnDefinition = "TEXT")
-    String reason;
+  // double fm_cigarettes_total;
 
-    @Enumerated(EnumType.STRING)
-    PhaseStatus status;
+  @Column(name = "condition_json", columnDefinition = "JSON", nullable = false)
+  @Type(JsonType.class)
+  JsonNode condition;
 
-    @CreationTimestamp
-    @Column(nullable = false)
-    LocalDateTime createdAt;
+  @Column(columnDefinition = "TEXT")
+  String reason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quit_plan_id")
-    QuitPlan quitPlan;
+  @Enumerated(EnumType.STRING)
+  PhaseStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "system_phase_condition_id")
-    SystemPhaseCondition systemPhaseCondition;
+  @CreationTimestamp
+  @Column(nullable = false)
+  LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<PhaseDetail> details = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "quit_plan_id")
+  QuitPlan quitPlan;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "system_phase_condition_id")
+  SystemPhaseCondition systemPhaseCondition;
 
+  @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
+  List<PhaseDetail> details = new ArrayList<>();
 }

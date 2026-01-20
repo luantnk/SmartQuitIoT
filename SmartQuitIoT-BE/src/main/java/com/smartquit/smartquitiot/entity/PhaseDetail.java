@@ -1,11 +1,10 @@
 package com.smartquit.smartquitiot.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "phase_detail")
@@ -15,20 +14,21 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PhaseDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String name;
-    LocalDate date;
-    int dayIndex;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phase_id")
-    Phase phase;
+  String name;
+  LocalDate date;
+  int dayIndex;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy ="phaseDetail" )
-    List<ReminderQueue> reminderQueue;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "phase_id")
+  Phase phase;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,mappedBy = "phaseDetail")
-    List<PhaseDetailMission> phaseDetailMissions;
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "phaseDetail")
+  List<ReminderQueue> reminderQueue;
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "phaseDetail")
+  List<PhaseDetailMission> phaseDetailMissions;
 }

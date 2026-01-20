@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -12,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MissionTypeDTO {
-    int id;
-    String name;
-    String description;
+  int id;
+  String name;
+  String description;
 }

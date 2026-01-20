@@ -3,55 +3,53 @@ package com.smartquit.smartquitiot.mapper;
 import com.smartquit.smartquitiot.dto.response.CoachDTO;
 import com.smartquit.smartquitiot.dto.response.CoachSummaryDTO;
 import com.smartquit.smartquitiot.entity.Coach;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CoachMapper {
 
-    private final AccountMapper accountMapper;
+  private final AccountMapper accountMapper;
 
-    public CoachDTO toCoachDTO(Coach coach) {
+  public CoachDTO toCoachDTO(Coach coach) {
 
-        CoachDTO coachDTO = new CoachDTO();
-        coachDTO.setId(coach.getId());
-        coachDTO.setFirstName(coach.getFirstName());
-        coachDTO.setLastName(coach.getLastName());
-        coachDTO.setAvatarUrl(coach.getAvatarUrl());
-        coachDTO.setGender(coach.getGender().name());
-        coachDTO.setRatingCount(coach.getRatingCount());
-        coachDTO.setRatingAvg(coach.getRatingAvg());
-        coachDTO.setExperienceYears(coach.getExperienceYears());
-        coachDTO.setSpecializations(coach.getSpecializations());
-        coachDTO.setBio(coach.getBio());
-        coachDTO.setCertificateUrl(coach.getCertificateUrl());
-        coachDTO.setAccount(accountMapper.toAccountDTO(coach.getAccount()));
+    CoachDTO coachDTO = new CoachDTO();
+    coachDTO.setId(coach.getId());
+    coachDTO.setFirstName(coach.getFirstName());
+    coachDTO.setLastName(coach.getLastName());
+    coachDTO.setAvatarUrl(coach.getAvatarUrl());
+    coachDTO.setGender(coach.getGender().name());
+    coachDTO.setRatingCount(coach.getRatingCount());
+    coachDTO.setRatingAvg(coach.getRatingAvg());
+    coachDTO.setExperienceYears(coach.getExperienceYears());
+    coachDTO.setSpecializations(coach.getSpecializations());
+    coachDTO.setBio(coach.getBio());
+    coachDTO.setCertificateUrl(coach.getCertificateUrl());
+    coachDTO.setAccount(accountMapper.toAccountDTO(coach.getAccount()));
 
-        return coachDTO;
-    }
-    public List<CoachDTO> toCoachDTO(List<Coach> coachList) {
-        return coachList.stream()
-                .map(this::toCoachDTO)
-                .collect(Collectors.toList());
-    }
-    public CoachSummaryDTO toCoachSummaryDTO(Coach coach) {
-        CoachSummaryDTO coachSummaryDTO =  new CoachSummaryDTO();
-        coachSummaryDTO.setId(coach.getId());
-        coachSummaryDTO.setFirstName(coach.getFirstName());
-        coachSummaryDTO.setLastName(coach.getLastName());
-        coachSummaryDTO.setAvatarUrl(coach.getAvatarUrl());
-        coachSummaryDTO.setRatingAvg(coach.getRatingAvg());
-        coachSummaryDTO.setAccountId(coach.getAccount().getId());
-        coachSummaryDTO.setSpecializations(coach.getSpecializations());
-        return coachSummaryDTO;
-    }
-    public List<CoachSummaryDTO> toCoachSummaryDTO(List<Coach> coachList) {
-        return coachList.stream()
-                .map(this::toCoachSummaryDTO)
-                .collect(Collectors.toList());
-    }
+    return coachDTO;
+  }
+
+  public List<CoachDTO> toCoachDTO(List<Coach> coachList) {
+    return coachList.stream().map(this::toCoachDTO).collect(Collectors.toList());
+  }
+
+  public CoachSummaryDTO toCoachSummaryDTO(Coach coach) {
+    CoachSummaryDTO coachSummaryDTO = new CoachSummaryDTO();
+    coachSummaryDTO.setId(coach.getId());
+    coachSummaryDTO.setFirstName(coach.getFirstName());
+    coachSummaryDTO.setLastName(coach.getLastName());
+    coachSummaryDTO.setAvatarUrl(coach.getAvatarUrl());
+    coachSummaryDTO.setRatingAvg(coach.getRatingAvg());
+    coachSummaryDTO.setAccountId(coach.getAccount().getId());
+    coachSummaryDTO.setSpecializations(coach.getSpecializations());
+    return coachSummaryDTO;
+  }
+
+  public List<CoachSummaryDTO> toCoachSummaryDTO(List<Coach> coachList) {
+    return coachList.stream().map(this::toCoachSummaryDTO).collect(Collectors.toList());
+  }
 }

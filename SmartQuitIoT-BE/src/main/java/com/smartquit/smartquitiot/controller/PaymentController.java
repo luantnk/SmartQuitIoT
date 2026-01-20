@@ -15,19 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
+  private final PaymentService paymentService;
 
-    @GetMapping("/statistics")
-    public ResponseEntity<?> getPaymentStatistics() {
-        return ResponseEntity.ok(paymentService.getPaymentStatistics());
-    }
+  @GetMapping("/statistics")
+  public ResponseEntity<?> getPaymentStatistics() {
+    return ResponseEntity.ok(paymentService.getPaymentStatistics());
+  }
 
-    @GetMapping("/all")
-    public ResponseEntity<Page<PaymentDTO>> getAllPayments(
-            @RequestParam (name = "page", defaultValue = "0") int page,
-            @RequestParam (name = "size", defaultValue = "10") int size,
-            @RequestParam (name = "search", defaultValue = "") String search
-    ) {
-        return ResponseEntity.ok(paymentService.getPayments(page, size, search));
-    }
+  @GetMapping("/all")
+  public ResponseEntity<Page<PaymentDTO>> getAllPayments(
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "size", defaultValue = "10") int size,
+      @RequestParam(name = "search", defaultValue = "") String search) {
+    return ResponseEntity.ok(paymentService.getPayments(page, size, search));
+  }
 }

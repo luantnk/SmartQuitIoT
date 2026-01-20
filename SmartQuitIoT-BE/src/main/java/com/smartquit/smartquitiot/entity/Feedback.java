@@ -3,11 +3,10 @@ package com.smartquit.smartquitiot.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.time.LocalDateTime;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -17,33 +16,31 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Feedback {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    @Column(columnDefinition = "TEXT")
-    String content;
+  @Column(columnDefinition = "TEXT")
+  String content;
 
-    @Column(nullable = false)
-    @Min(1)
-    @Max(5)
-    int star;
+  @Column(nullable = false)
+  @Min(1)
+  @Max(5)
+  int star;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(nullable = false, updatable = false)
+  LocalDateTime createdAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id", nullable = false, unique = true)
-    Appointment appointment;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "appointment_id", nullable = false, unique = true)
+  Appointment appointment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    Member member;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id", nullable = false)
+  Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coach_id", nullable = false)
-    Coach coach;
-
-
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "coach_id", nullable = false)
+  Coach coach;
 }

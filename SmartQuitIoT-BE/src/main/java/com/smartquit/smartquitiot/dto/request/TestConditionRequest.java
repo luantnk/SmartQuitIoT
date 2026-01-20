@@ -13,9 +13,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TestConditionRequest {
-     @NotNull(message = "Condition is required")
-     JsonNode condition;
+  @NotNull(message = "Condition is required")
+  JsonNode condition;
 
-     @NotNull(message = "Test data is required")
-     TestData testData;
+  @NotNull(message = "Test data is required")
+  TestData testData;
 }

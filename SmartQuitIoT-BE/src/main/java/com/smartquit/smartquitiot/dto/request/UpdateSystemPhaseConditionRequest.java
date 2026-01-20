@@ -12,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateSystemPhaseConditionRequest {
-    @NotNull(message = "Condition JSON is required")
-    private JsonNode condition;
+  @NotNull(message = "Condition JSON is required")
+  private JsonNode condition;
 }

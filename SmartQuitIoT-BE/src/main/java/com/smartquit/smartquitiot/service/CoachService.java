@@ -4,19 +4,25 @@ import com.smartquit.smartquitiot.dto.request.CoachUpdateRequest;
 import com.smartquit.smartquitiot.dto.response.CoachDTO;
 import com.smartquit.smartquitiot.dto.response.CoachSummaryDTO;
 import com.smartquit.smartquitiot.entity.Coach;
+import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Map;
+public interface CoachService {
 
-public interface    CoachService {
+  Coach getAuthenticatedCoach();
 
-    Coach getAuthenticatedCoach();
-    CoachDTO getAuthenticatedCoachProfile();
-    List<CoachSummaryDTO> getCoachList();
-    Page<CoachDTO> getAllCoaches(int page, int size, String searchString, Sort.Direction sortBy, Boolean isActive);
-    CoachDTO getCoachById(int id);
-    CoachDTO updateProfile(int coachId, CoachUpdateRequest request);
-    Map<String, Object> getCoachStatistics();
+  CoachDTO getAuthenticatedCoachProfile();
+
+  List<CoachSummaryDTO> getCoachList();
+
+  Page<CoachDTO> getAllCoaches(
+      int page, int size, String searchString, Sort.Direction sortBy, Boolean isActive);
+
+  CoachDTO getCoachById(int id);
+
+  CoachDTO updateProfile(int coachId, CoachUpdateRequest request);
+
+  Map<String, Object> getCoachStatistics();
 }

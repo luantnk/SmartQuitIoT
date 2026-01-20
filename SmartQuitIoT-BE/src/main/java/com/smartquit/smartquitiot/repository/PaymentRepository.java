@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
-    Page<Payment> findAll(Specification<Payment> spec ,Pageable pageable);
+  Page<Payment> findAll(Specification<Payment> spec, Pageable pageable);
 }

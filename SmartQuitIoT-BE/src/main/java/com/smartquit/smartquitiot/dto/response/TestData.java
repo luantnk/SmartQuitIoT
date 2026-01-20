@@ -11,16 +11,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TestData {
 
-    // Phase data
-    private Double progress;              // từ phase.getProgress()
+  // Phase data
+  private Double progress; // từ phase.getProgress()
 
-    // Member metric data
-    private Double avgCravingLevel;       // từ member.metric.avgCravingLevel
-    private Double avgCigarettesPerDay;   // từ member.metric.avgCigarettesPerDay
-    private Double avgMood;               // từ member.metric.avgMood
-    private Double avgAnxiety;            // từ member.metric.avgAnxiety
-    private Double avgConfidentLevel;     // từ member.metric.avgConfidentLevel
+  // Member metric data
+  private Double avgCravingLevel; // từ member.metric.avgCravingLevel
+  private Double avgCigarettesPerDay; // từ member.metric.avgCigarettesPerDay
+  private Double avgMood; // từ member.metric.avgMood
+  private Double avgAnxiety; // từ member.metric.avgAnxiety
+  private Double avgConfidentLevel; // từ member.metric.avgConfidentLevel
 
-    // Form metric data
-    private Double fmCigarettesTotal;     // từ formMetric.smokeAvgPerDay
+  // Form metric data
+  private Double fmCigarettesTotal; // từ formMetric.smokeAvgPerDay
 }

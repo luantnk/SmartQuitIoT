@@ -8,77 +8,83 @@ import com.smartquit.smartquitiot.dto.response.PostSummaryDTO;
 import com.smartquit.smartquitiot.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+  private final PostService postService;
 
-    @GetMapping("/latest")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @Operation(summary = "Get latest posts for Home screen", description = "Returns latest N posts with summary info")
-    public ResponseEntity<GlobalResponse<List<PostSummaryDTO>>> getLatestPosts(
-            @RequestParam(defaultValue = "5") int limit
-    ) {
-        List<PostSummaryDTO> latestPosts = postService.getLatestPosts(limit);
-        return ResponseEntity.ok(GlobalResponse.ok(latestPosts));
-    }
+  @GetMapping("/latest")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      summary = "Get latest posts for Home screen",
+      description = "Returns latest N posts with summary info")
+  public ResponseEntity<GlobalResponse<List<PostSummaryDTO>>> getLatestPosts(
+      @RequestParam(defaultValue = "5") int limit) {
+    List<PostSummaryDTO> latestPosts = postService.getLatestPosts(limit);
+    return ResponseEntity.ok(GlobalResponse.ok(latestPosts));
+  }
 
-    @GetMapping
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<GlobalResponse<List<PostSummaryDTO>>> getAllPosts(
-            @RequestParam(name = "query", required = false) String query) {
-        List<PostSummaryDTO> posts = postService.getAllPosts(query);
-        return ResponseEntity.ok(GlobalResponse.ok(posts));
-    }
+  @GetMapping
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<GlobalResponse<List<PostSummaryDTO>>> getAllPosts(
+      @RequestParam(name = "query", required = false) String query) {
+    List<PostSummaryDTO> posts = postService.getAllPosts(query);
+    return ResponseEntity.ok(GlobalResponse.ok(posts));
+  }
 
-    @GetMapping("/{id}")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @Operation(summary = "Get post detail by id", description = "Returns full post content including media and comments")
-    public ResponseEntity<GlobalResponse<PostDetailDTO>> getPostDetail(@PathVariable("id") Integer id) {
-        PostDetailDTO postDetail = postService.getPostDetail(id);
-        return ResponseEntity.ok(GlobalResponse.ok(postDetail));
-    }
+  @GetMapping("/{id}")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      summary = "Get post detail by id",
+      description = "Returns full post content including media and comments")
+  public ResponseEntity<GlobalResponse<PostDetailDTO>> getPostDetail(
+      @PathVariable("id") Integer id) {
+    PostDetailDTO postDetail = postService.getPostDetail(id);
+    return ResponseEntity.ok(GlobalResponse.ok(postDetail));
+  }
 
-    @PostMapping
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<PostDetailDTO> createPost(@RequestBody PostCreateRequest request) {
-        return ResponseEntity.ok(postService.createPost(request));
-    }
+  @PostMapping
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<PostDetailDTO> createPost(@RequestBody PostCreateRequest request) {
+    return ResponseEntity.ok(postService.createPost(request));
+  }
 
-    @PutMapping("/{postId}")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<PostDetailDTO> updatePost(@PathVariable Integer postId, @RequestBody PostUpdateRequest request) {
-        return ResponseEntity.ok(postService.updatePost(postId, request));
-    }
+  @PutMapping("/{postId}")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<PostDetailDTO> updatePost(
+      @PathVariable Integer postId, @RequestBody PostUpdateRequest request) {
+    return ResponseEntity.ok(postService.updatePost(postId, request));
+  }
 
-    @DeleteMapping("/{postId}")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<?> deletePost(@PathVariable Integer postId) {
-        postService.deletePost(postId);
-        return ResponseEntity.ok().body("{\"message\": \"Post deleted successfully\"}");
-    }
+  @DeleteMapping("/{postId}")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<?> deletePost(@PathVariable Integer postId) {
+    postService.deletePost(postId);
+    return ResponseEntity.ok().body("{\"message\": \"Post deleted successfully\"}");
+  }
 
-    @GetMapping("/my-posts")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @Operation(summary = "Get my posts", description = "Returns list my posts with summary info")
-    public ResponseEntity<List<PostSummaryDTO>> getAllMyPosts() {
-        List<PostSummaryDTO> posts = postService.getAllMyPosts();
-        return ResponseEntity.ok(posts);
-    }
+  @GetMapping("/my-posts")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(summary = "Get my posts", description = "Returns list my posts with summary info")
+  public ResponseEntity<List<PostSummaryDTO>> getAllMyPosts() {
+    List<PostSummaryDTO> posts = postService.getAllMyPosts();
+    return ResponseEntity.ok(posts);
+  }
 
-    @PostMapping("/sync")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @Operation(summary = "Sync DB to Elasticsearch", description = "Manually triggers a migration of all old SQL data into Elasticsearch index")
-    public ResponseEntity<?> syncAllPosts() {
-        postService.syncAllPosts();
-        return ResponseEntity.ok("Synchronization started successfully.");
-    }
+  @PostMapping("/sync")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(
+      summary = "Sync DB to Elasticsearch",
+      description = "Manually triggers a migration of all old SQL data into Elasticsearch index")
+  public ResponseEntity<?> syncAllPosts() {
+    postService.syncAllPosts();
+    return ResponseEntity.ok("Synchronization started successfully.");
+  }
 }

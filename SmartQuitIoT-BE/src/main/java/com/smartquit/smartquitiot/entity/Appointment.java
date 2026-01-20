@@ -3,13 +3,12 @@ package com.smartquit.smartquitiot.entity;
 import com.smartquit.smartquitiot.enums.AppointmentStatus;
 import com.smartquit.smartquitiot.enums.CancelledBy;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -19,38 +18,37 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Appointment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  int id;
 
-    LocalDate date;
+  String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Member member;
+  LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Coach coach;
+  @ManyToOne(fetch = FetchType.LAZY)
+  Member member;
 
-    @Enumerated(EnumType.STRING)
-    AppointmentStatus appointmentStatus; // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+  @ManyToOne(fetch = FetchType.LAZY)
+  Coach coach;
 
-    @Enumerated(EnumType.STRING)
-    CancelledBy cancelledBy; // MEMBER, COACH
+  @Enumerated(EnumType.STRING)
+  AppointmentStatus appointmentStatus; // PENDING, IN_PROGRESS, COMPLETED, CANCELLED
 
-    LocalDateTime cancelledAt;
+  @Enumerated(EnumType.STRING)
+  CancelledBy cancelledBy; // MEMBER, COACH
 
-    LocalDateTime createdAt;
-    @ManyToOne(fetch = FetchType.LAZY)
-    CoachWorkSchedule coachWorkSchedule;
+  LocalDateTime cancelledAt;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "appointment_snapshots",
-            joinColumns = @JoinColumn(name = "appointment_id")
-    )
-    @Column(name = "image_url")
-    List<String> snapshotUrls = new ArrayList<>();
+  LocalDateTime createdAt;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  CoachWorkSchedule coachWorkSchedule;
 
+  @ElementCollection
+  @CollectionTable(
+      name = "appointment_snapshots",
+      joinColumns = @JoinColumn(name = "appointment_id"))
+  @Column(name = "image_url")
+  List<String> snapshotUrls = new ArrayList<>();
 }

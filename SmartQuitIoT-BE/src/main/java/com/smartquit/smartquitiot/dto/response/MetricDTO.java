@@ -1,10 +1,9 @@
 package com.smartquit.smartquitiot.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.math.BigDecimal;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,34 +12,32 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MetricDTO {
-    //show at home screen dashboard
-    Integer streaks;
-    BigDecimal annualSaved;
-    BigDecimal moneySaved;
-    Double reductionPercentage;
-    Double smokeFreeDayPercentage;
-    Double reductionInLastSmoked;
+  // show at home screen dashboard
+  Integer streaks;
+  BigDecimal annualSaved;
+  BigDecimal moneySaved;
+  Double reductionPercentage;
+  Double smokeFreeDayPercentage;
+  Double reductionInLastSmoked;
 
-    //show at health data screen
-    //avg metrics
-    Double avgCravingLevel;
-    Double avgMood;
-    Double avgAnxiety;
-    Double avgConfidentLevel;
-    Double avgCigarettesPerDay;
-    Double avgNicotineMgPerDay;
+  // show at health data screen
+  // avg metrics
+  Double avgCravingLevel;
+  Double avgMood;
+  Double avgAnxiety;
+  Double avgConfidentLevel;
+  Double avgCigarettesPerDay;
+  Double avgNicotineMgPerDay;
 
-    //current metrics
-    Integer currentCravingLevel;
-    Integer currentMoodLevel;
-    Integer currentConfidenceLevel;
-    Integer currentAnxietyLevel;
+  // current metrics
+  Integer currentCravingLevel;
+  Integer currentMoodLevel;
+  Integer currentConfidenceLevel;
+  Integer currentAnxietyLevel;
 
-    //iot metrics
-    Integer steps;
-    Integer heartRate;
-    Integer spo2;
-    Double sleepDuration;
-
-
+  // iot metrics
+  Integer steps;
+  Integer heartRate;
+  Integer spo2;
+  Double sleepDuration;
 }

@@ -1,21 +1,21 @@
 package com.smartquit.smartquitiot.dto.request;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class PostUpdateRequest {
-    private String title;
-    private String description;
-    private String content;
-    private String thumbnail;
-    private List<PostMediaRequest> media;
-//    private Integer accountId; //
+  private String title;
+  private String description;
+  private String content;
+  private String thumbnail;
+  private List<PostMediaRequest> media;
 
-    @Data
-    public static class PostMediaRequest {
-        private String mediaUrl;
-        private String mediaType;
-    }
+  //    private Integer accountId; //
+
+  @Data
+  public static class PostMediaRequest {
+    private String mediaUrl;
+    private String mediaType;
+  }
 }
