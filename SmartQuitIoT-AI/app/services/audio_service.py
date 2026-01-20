@@ -30,7 +30,7 @@ def text_to_speech_stream(text: str) -> io.BytesIO:
             inputs["input_ids"], speaker_embeddings, vocoder=tts_vocoder
         )
         memory_buffer = io.BytesIO()
-        sf.write(memory_buffer, speech.numpy(), samplerate=16000, format='WAV')
+        sf.write(memory_buffer, speech.numpy(), samplerate=16000, format="WAV")
         memory_buffer.seek(0)
         return memory_buffer
     except Exception as e:
