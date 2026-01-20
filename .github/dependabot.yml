@@ -1,17 +1,27 @@
 version: 2
 updates:
-  # Maintain dependencies for GitHub Actions
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
 
-  # Maintain dependencies for Python (pip)
+  # Python AI Service
   - package-ecosystem: "pip"
-    directory: "/" # Location of requirements.txt
+    directory: "/SmartQuitIoT-AI"
     schedule:
       interval: "weekly"
     groups:
        python-dependencies:
+          patterns:
+            - "*"
+
+  # Java Backend Service
+  - package-ecosystem: "maven"
+    directory: "/SmartQuitIoT-BE"
+    schedule:
+      interval: "weekly"
+    groups:
+       spring-dependencies:
           patterns:
             - "*"
