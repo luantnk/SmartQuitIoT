@@ -3,6 +3,8 @@ package com.smartquit.smartquitiot.controller;
 import com.smartquit.smartquitiot.dto.request.DiaryRecordRequest;
 import com.smartquit.smartquitiot.dto.request.DiaryRecordUpdateRequest;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
+import com.smartquit.smartquitiot.dto.response.GlobalResponse;
+import com.smartquit.smartquitiot.dto.response.PredictRiskResponse;
 import com.smartquit.smartquitiot.service.DiaryRecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -116,5 +118,16 @@ public class DiaryRecordController {
     if (startDate == null) startDate = endDate.minusDays(6);
     String base64Image = diaryRecordService.generateReportImage(memberId, startDate, endDate);
     return ResponseEntity.ok(Map.of("status", "success", "image_base64", base64Image));
+  }
+
+  @GetMapping("/risk-prediction/{memberId}")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
+  @SecurityRequirement(name = "Bearer Authentication")
+  @Operation(summary = "Get AI risk prediction dashboard data for a member")
+  public ResponseEntity<GlobalResponse<PredictRiskResponse>> getRiskPredictionForAdmin(
+      @PathVariable int memberId) {
+    log.info("REST request to get risk prediction for memberId: {}", memberId);
+    PredictRiskResponse response = diaryRecordService.getMemberRiskPrediction(memberId);
+    return ResponseEntity.ok(GlobalResponse.ok("Risk prediction fetched successfully", response));
   }
 }

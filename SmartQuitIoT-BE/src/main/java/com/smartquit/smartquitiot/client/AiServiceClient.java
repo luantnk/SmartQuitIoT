@@ -43,4 +43,7 @@ public interface AiServiceClient {
 
   @PostMapping("/generate-report-image")
   GenerateReportResponse generateReportImage(@RequestBody GenerateReportRequest request);
+
+  @PostMapping("/predict-risk/dashboard")
+  PredictRiskResponse getRiskPredictionDashboard(@RequestBody PredictRiskRequest request);
 }

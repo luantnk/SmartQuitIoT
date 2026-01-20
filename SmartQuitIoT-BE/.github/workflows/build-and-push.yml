@@ -137,7 +137,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # 3. Notifications
+  #Notifications
   notify:
     runs-on: ubuntu-latest
     if: always()

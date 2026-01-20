@@ -183,6 +183,12 @@
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.diffplug.spotless</groupId>-->
 <!--            <artifactId>spotless-maven-plugin</artifactId>-->
@@ -196,6 +202,8 @@
         <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
 
+
+
     <dependency>
         <groupId>com.github.loki4j</groupId>
         <artifactId>loki-logback-appender</artifactId>
@@ -203,11 +211,6 @@
 
     </dependencies>
 
-    <dependency>
-        <groupId>commons-fileupload</groupId>
-        <artifactId>commons-fileupload</artifactId>
-        <version>1.6.0</version>
-    </dependency>
 
     <dependencyManagement>
         <dependencies>

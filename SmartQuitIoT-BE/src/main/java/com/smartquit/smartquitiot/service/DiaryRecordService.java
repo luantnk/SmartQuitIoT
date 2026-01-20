@@ -4,6 +4,7 @@ import com.smartquit.smartquitiot.dto.request.DiaryRecordRequest;
 import com.smartquit.smartquitiot.dto.request.DiaryRecordUpdateRequest;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
 import com.smartquit.smartquitiot.dto.response.GlobalResponse;
+import com.smartquit.smartquitiot.dto.response.PredictRiskResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -29,4 +30,6 @@ public interface DiaryRecordService {
   Object getWeeklySummaryFromAI(int memberId);
 
   String generateReportImage(int memberId, LocalDate startDate, LocalDate endDate);
+
+  PredictRiskResponse getMemberRiskPrediction(int memberId);
 }

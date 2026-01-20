@@ -4,10 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.smartquit.smartquitiot.client.AiServiceClient;
 import com.smartquit.smartquitiot.dto.request.*;
-import com.smartquit.smartquitiot.dto.response.AnalyzeDiaryResponse;
-import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
-import com.smartquit.smartquitiot.dto.response.GenerateReportResponse;
-import com.smartquit.smartquitiot.dto.response.GlobalResponse;
+import com.smartquit.smartquitiot.dto.response.*;
 import com.smartquit.smartquitiot.entity.*;
 import com.smartquit.smartquitiot.enums.*;
 import com.smartquit.smartquitiot.mapper.DiaryRecordMapper;
@@ -1042,6 +1039,65 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
     } catch (Exception e) {
       log.error("Error generating report image", e);
       throw new RuntimeException("Failed to generate report image: " + e.getMessage());
+    }
+  }
+
+  @Override
+  @Cacheable(value = "risk_prediction", key = "#memberId") // Optional: Cache result for performance
+  public PredictRiskResponse getMemberRiskPrediction(int memberId) {
+    Member member =
+        memberRepository
+            .findById(memberId)
+            .orElseThrow(() -> new RuntimeException("Member not found"));
+
+    int age = calculateAge(member.getDob());
+
+    int genderCode = (member.getGender() == Gender.MALE) ? 1 : 0;
+
+    QuitPlan currentQuitPlan = quitPlanRepository.findTopByMemberIdOrderByCreatedAtDesc(memberId);
+    if (currentQuitPlan == null) {
+      throw new RuntimeException("No active quit plan found for member");
+    }
+
+    int ftndScore = currentQuitPlan.getFtndScore();
+    int smokeAvg = currentQuitPlan.getFormMetric().getSmokeAvgPerDay();
+    Metric metric = metricRepository.findByMemberId(memberId).orElse(null);
+
+    int moodLevel = 0;
+    int anxietyLevel = 0;
+
+    if (metric != null) {
+      if (metric.getCurrentMoodLevel() > 0) moodLevel = metric.getCurrentMoodLevel();
+      if (metric.getCurrentAnxietyLevel() > 0) anxietyLevel = metric.getCurrentAnxietyLevel();
+    } else {
+      DiaryRecord latestRecord =
+          diaryRecordRepository.findTopByMemberIdOrderByDateDesc(memberId).orElse(null);
+      if (latestRecord != null) {
+        moodLevel = latestRecord.getMoodLevel();
+        anxietyLevel = latestRecord.getAnxietyLevel();
+      }
+    }
+
+    int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+
+    PredictRiskRequest request =
+        PredictRiskRequest.builder()
+            .age(age)
+            .genderCode(genderCode)
+            .ftndScore(ftndScore)
+            .smokeAvgPerDay(smokeAvg)
+            .moodLevel(moodLevel)
+            .anxietyLevel(anxietyLevel)
+            .dayOfWeek(dayOfWeek)
+            .build();
+
+    log.info("Requesting Risk Prediction for Member ID: {}", memberId);
+
+    try {
+      return aiServiceClient.getRiskPredictionDashboard(request);
+    } catch (Exception e) {
+      log.error("Error fetching risk prediction from AI Service", e);
+      throw new RuntimeException("Failed to get risk prediction");
     }
   }
 
