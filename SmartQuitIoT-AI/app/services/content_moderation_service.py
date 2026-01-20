@@ -5,6 +5,9 @@ from PIL import Image, UnidentifiedImageError
 import io
 import os
 import tempfile
+import socket
+import ipaddress
+from urllib.parse import urlparse
 from app.models import text_classifier, image_processor, image_model
 
 TOXIC_THRESHOLD = 0.7
@@ -36,7 +39,43 @@ def is_image_nsfw(pil_image) -> bool:
     return label == "nsfw"
 
 
+def validate_external_url(url: str) -> None:
+    """
+    Validate that the given URL is an HTTP(S) URL and does not resolve to
+    a private, loopback, or otherwise non-public IP address.
+    Raises ValueError if the URL is considered unsafe.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("Only HTTP and HTTPS URLs are allowed.")
+    if not parsed.hostname:
+        raise ValueError("URL must include a hostname.")
+
+    try:
+        # Resolve all IP addresses for the hostname
+        addr_info = socket.getaddrinfo(parsed.hostname, None)
+    except socket.gaierror:
+        raise ValueError("Could not resolve hostname.")
+
+    for family, _, _, _, sockaddr in addr_info:
+        ip_str = sockaddr[0]
+        try:
+            ip_obj = ipaddress.ip_address(ip_str)
+        except ValueError:
+            continue
+
+        if (
+            ip_obj.is_private
+            or ip_obj.is_loopback
+            or ip_obj.is_link_local
+            or ip_obj.is_multicast
+            or ip_obj.is_reserved
+        ):
+            raise ValueError("Connections to private or local network addresses are not allowed.")
+
+
 def check_image_url(url: str) -> bool:
+    validate_external_url(url)
     response = requests.get(url, stream=True, timeout=10)
     response.raise_for_status()
     try:
@@ -50,6 +89,7 @@ def check_image_url(url: str) -> bool:
 def check_video_url(url: str) -> bool:
     temp_path = None
     cap = None
+        validate_external_url(url)
     try:
         response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()
