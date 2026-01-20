@@ -89,12 +89,12 @@ public class ChatbotServiceImpl implements ChatbotService {
         MemberDTO member = memberService.getMemberById(Integer.parseInt(payload.getMemberId()));
 
         String userContext = String.format("""
-                ### USER CONTEXT:
-                - Member ID: %d
-                - Name: %s
-                - Age: %d
-                - Gender: %s
-                """,
+                        ### USER CONTEXT:
+                        - Member ID: %d
+                        - Name: %s
+                        - Age: %d
+                        - Gender: %s
+                        """,
                 member.getId(),
                 member.getFirstName() + " " + member.getLastName(),
                 member.getAge(),
@@ -111,23 +111,10 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         ChatbotResponse response = chatbotResponseMapper.toChatbotResponse(message);
         if (response.getText() != null && !response.getText().isEmpty()) {
-            try {
-                TextToVoiceRequest ttsRequest = TextToVoiceRequest.builder()
-                        .text(response.getText())
-                        .build();
-
-                byte[] audioBytes = aiServiceClient.textToVoice(ttsRequest);
-
-                if (audioBytes != null && audioBytes.length > 0) {
-                    String base64Audio = Base64.getEncoder().encodeToString(audioBytes);
-                    response.setAudioBase64(base64Audio);
-                }
-            } catch (Exception e) {
-                log.error("Failed to generate voice for chatbot response", e);
-
-            }
+            String encodedText = Base64.getUrlEncoder().encodeToString(response.getText().getBytes());
+            response.setAudioUrl("/api/audio/stream?text=" + encodedText);
         }
         return response;
-
     }
 }
+

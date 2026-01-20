@@ -8,6 +8,7 @@ import com.smartquit.smartquitiot.dto.response.AiPredictionResponse;
 import com.smartquit.smartquitiot.dto.response.AnalyzeDiaryResponse;
 import com.smartquit.smartquitiot.dto.response.ContentCheckResponseDTO;
 import com.smartquit.smartquitiot.dto.response.VoiceToTextResponse;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,4 +44,7 @@ public interface AiServiceClient {
 
     @PostMapping(value = "/text-to-voice")
     byte[] textToVoice(@RequestBody TextToVoiceRequest request);
+
+    @PostMapping(value = "/text-to-voice")
+    Response textToVoiceStream(@RequestBody TextToVoiceRequest request);
 }

@@ -1,3 +1,4 @@
+import io
 import os
 import uvicorn
 import shutil
@@ -28,7 +29,7 @@ from app.services.content_moderation_service import (
 )
 from app.services.audio_service import (
     transcribe_audio_file,
-    text_to_speech_file,
+    # text_to_speech_file,
     text_to_speech_stream,
 )
 from app.services.summary_service import (
@@ -248,9 +249,22 @@ async def api_voice_to_text(file: UploadFile = File(...)):
 @app.post("/text-to-voice", tags=["Audio"])
 async def api_text_to_voice(req: TextToSpeechRequest):
     try:
-        audio_buffer = text_to_speech_stream(req.text)
-        return StreamingResponse(audio_buffer, media_type="audio/wav")
+        # Generate speech into memory
+        inputs = ai_models.tts_processor(text=req.text, return_tensors="pt")
+        speech = ai_models.tts_model.generate_speech(
+            inputs["input_ids"], ai_models.speaker_embeddings, vocoder=ai_models.tts_vocoder
+        )
+
+        # Write to Memory Buffer (No disk I/O)
+        memory_buffer = io.BytesIO()
+        import soundfile as sf
+        sf.write(memory_buffer, speech.numpy(), samplerate=16000, format='WAV')
+        memory_buffer.seek(0)
+
+        # Return Stream
+        return StreamingResponse(memory_buffer, media_type="audio/wav")
     except Exception as e:
+        print(f"PYTHON TTS ERROR: {e}")
         raise HTTPException(500, str(e))
 
 
