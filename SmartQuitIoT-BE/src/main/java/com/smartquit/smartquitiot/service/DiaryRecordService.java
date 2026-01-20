@@ -21,4 +21,5 @@ public interface DiaryRecordService {
     boolean hasCreatedDiaryRecordToday();
     DiaryRecordDTO updateDiaryRecord(int recordId,  DiaryRecordUpdateRequest request);
     Object getWeeklySummaryFromAI(int memberId);
+    String generateReportImage(int memberId, LocalDate startDate, LocalDate endDate);
 }

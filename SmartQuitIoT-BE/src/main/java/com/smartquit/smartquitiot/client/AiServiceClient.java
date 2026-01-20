@@ -1,13 +1,7 @@
 package com.smartquit.smartquitiot.client;
 
-import com.smartquit.smartquitiot.dto.request.AISummaryRequest;
-import com.smartquit.smartquitiot.dto.request.AiPredictionRequest;
-import com.smartquit.smartquitiot.dto.request.AnalyzeDiaryRequest;
-import com.smartquit.smartquitiot.dto.request.TextToVoiceRequest;
-import com.smartquit.smartquitiot.dto.response.AiPredictionResponse;
-import com.smartquit.smartquitiot.dto.response.AnalyzeDiaryResponse;
-import com.smartquit.smartquitiot.dto.response.ContentCheckResponseDTO;
-import com.smartquit.smartquitiot.dto.response.VoiceToTextResponse;
+import com.smartquit.smartquitiot.dto.request.*;
+import com.smartquit.smartquitiot.dto.response.*;
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -47,4 +41,7 @@ public interface AiServiceClient {
 
     @PostMapping(value = "/text-to-voice")
     Response textToVoiceStream(@RequestBody TextToVoiceRequest request);
+
+    @PostMapping("/generate-report-image")
+    GenerateReportResponse generateReportImage(@RequestBody GenerateReportRequest request);
 }

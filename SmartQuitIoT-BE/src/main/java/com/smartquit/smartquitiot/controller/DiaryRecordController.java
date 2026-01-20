@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Slf4j
@@ -97,5 +99,24 @@ public class DiaryRecordController {
         log.info("REST request to get AI weekly summary for memberId: {}", memberId);
         Object summary = diaryRecordService.getWeeklySummaryFromAI(memberId);
         return ResponseEntity.ok(com.smartquit.smartquitiot.dto.response.GlobalResponse.ok("Summary generated successfully", summary));
+    }
+
+    @GetMapping("/report-image/{memberId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COACH')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "Generate a visual report (Base64 Image) for a member based on diary logs")
+    public ResponseEntity<?> getMemberReportImage(
+            @PathVariable int memberId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        log.info("REST request to generate report image for memberId: {}", memberId);
+        if (endDate == null) endDate = LocalDate.now();
+        if (startDate == null) startDate = endDate.minusDays(6);
+        String base64Image = diaryRecordService.generateReportImage(memberId, startDate, endDate);
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "image_base64", base64Image
+        ));
     }
 }

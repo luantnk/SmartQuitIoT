@@ -4,6 +4,7 @@ import com.smartquit.smartquitiot.client.AiServiceClient;
 import com.smartquit.smartquitiot.dto.request.*;
 import com.smartquit.smartquitiot.dto.response.AnalyzeDiaryResponse;
 import com.smartquit.smartquitiot.dto.response.DiaryRecordDTO;
+import com.smartquit.smartquitiot.dto.response.GenerateReportResponse;
 import com.smartquit.smartquitiot.dto.response.GlobalResponse;
 import com.smartquit.smartquitiot.entity.*;
 import com.smartquit.smartquitiot.enums.*;
@@ -771,6 +772,75 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
             throw new RuntimeException("Failed to generate AI summary: " + e.getMessage());
         }
     }
+
+    @Override
+    public String generateReportImage(int memberId, LocalDate startDate, LocalDate endDate) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with id: " + memberId));
+
+        List<DiaryRecord> records = diaryRecordRepository.findByMemberIdAndDateBetweenOrderByDateAsc(
+                memberId, startDate, endDate
+        );
+
+        if (records.isEmpty()) {
+            throw new RuntimeException("No diary records found for this member in the specified date range.");
+        }
+
+        List<AIDailyLog> aiLogs = records.stream()
+                .map(this::mapToAIDailyLog)
+                .collect(toList());
+
+        GenerateReportRequest request = GenerateReportRequest.builder()
+                .memberName(member.getFirstName() + " " + member.getLastName())
+                .startDate(startDate.toString())
+                .endDate(endDate.toString())
+                .logs(aiLogs)
+                .build();
+
+        try {
+            log.info("Requesting Report Image from AI Service for member: {}", memberId);
+            GenerateReportResponse response = aiServiceClient.generateReportImage(request);
+
+            if (response.getImageBase64() == null) {
+                throw new RuntimeException("AI Service returned no image.");
+            }
+
+            return response.getImageBase64();
+        } catch (Exception e) {
+            log.error("Error generating report image", e);
+            throw new RuntimeException("Failed to generate report image: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Helper method to map Entity to DTO to avoid code duplication.
+     * Corrected to remove null checks on primitive int fields.
+     */
+    private AIDailyLog mapToAIDailyLog(DiaryRecord record) {
+        return AIDailyLog.builder()
+                .id(record.getId())
+                .date(record.getDate().toString())
+                .haveSmoked(record.isHaveSmoked() ? 1 : 0)
+                .cigarettesSmoked(record.getCigarettesSmoked())
+                .estimatedNicotineIntake(record.getEstimatedNicotineIntake() != null ? record.getEstimatedNicotineIntake().doubleValue() : 0.0)
+                .moodLevel(record.getMoodLevel())
+                .anxietyLevel(record.getAnxietyLevel())
+                .cravingLevel(record.getCravingLevel())
+                .confidenceLevel(record.getConfidenceLevel())
+                .isConnectIoTDevice(record.isConnectIoTDevice() ? 1 : 0)
+                .heartRate((double) record.getHeartRate())
+                .spo2((double) record.getSpo2())
+                .steps(record.getSteps())
+                .sleepDuration(record.getSleepDuration())
+                .isUseNrt(record.isUseNrt() ? 1 : 0)
+                .moneySpentOnNrt(record.getMoneySpentOnNrt())
+                .reductionPercentage(record.getReductionPercentage())
+                .triggers(record.getTriggers())
+                .note(record.getNote())
+                .build();
+    }
+
+
 
     /**
      * Helper method to call Python API and send Notification based on Red/Yellow/Green status.
