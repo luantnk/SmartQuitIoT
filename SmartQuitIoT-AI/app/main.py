@@ -9,7 +9,7 @@ from typing import List, Dict
 from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse
 from fastapi.concurrency import run_in_threadpool
-
+from starlette.responses import StreamingResponse
 
 from app.requests.api_schemas import (
     TextCheckRequest,
@@ -26,7 +26,7 @@ from app.services.content_moderation_service import (
     check_image_url,
     check_video_url,
 )
-from app.services.audio_service import transcribe_audio_file, text_to_speech_file
+from app.services.audio_service import transcribe_audio_file, text_to_speech_file, text_to_speech_stream
 from app.services.summary_service import (
     summary_service,
     generate_coach_summary,
@@ -241,15 +241,13 @@ async def api_voice_to_text(file: UploadFile = File(...)):
             os.remove(temp_path)
 
 
+
 @app.post("/text-to-voice", tags=["Audio"])
-async def api_text_to_voice(req: TextToSpeechRequest, bg: BackgroundTasks):
-    out_path = os.path.join(CURRENT_WORKING_DIR, f"tts_{uuid.uuid4()}.wav")
+async def api_text_to_voice(req: TextToSpeechRequest):
     try:
-        text_to_speech_file(req.text, out_path)
-        bg.add_task(cleanup_file, out_path)
-        return FileResponse(out_path, media_type="audio/wav", filename="speech.wav")
+        audio_buffer = text_to_speech_stream(req.text)
+        return StreamingResponse(audio_buffer, media_type="audio/wav")
     except Exception as e:
-        cleanup_file(out_path)
         raise HTTPException(500, str(e))
 
 
