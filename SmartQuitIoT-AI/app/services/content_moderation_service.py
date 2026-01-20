@@ -71,7 +71,9 @@ def validate_external_url(url: str) -> None:
             or ip_obj.is_multicast
             or ip_obj.is_reserved
         ):
-            raise ValueError("Connections to private or local network addresses are not allowed.")
+            raise ValueError(
+                "Connections to private or local network addresses are not allowed."
+            )
 
 
 def check_image_url(url: str) -> bool:
@@ -89,18 +91,26 @@ def check_image_url(url: str) -> bool:
 def check_video_url(url: str) -> bool:
     temp_path = None
     cap = None
-        validate_external_url(url)
+
+    # 1. Fix: Align this function call with the variables above
+    validate_external_url(url)
+
     try:
         response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()
 
+        # Create a temp file
         temp_fd, temp_path = tempfile.mkstemp(suffix=".mp4")
+
+        # 2. Improvement: Write stream to file (Logic is okay here)
         with os.fdopen(temp_fd, "wb") as temp_file:
             for chunk in response.iter_content(chunk_size=1024 * 1024):
                 temp_file.write(chunk)
 
         cap = cv2.VideoCapture(temp_path)
         if not cap.isOpened():
+            # If opencv fails, we should probably return False or raise a specific error
+            # raising ValueError is fine, but ensure your API handles it.
             raise ValueError(
                 "Could not open video file. Corrupted or unsupported format."
             )
@@ -110,24 +120,23 @@ def check_video_url(url: str) -> bool:
         while True:
             ret, frame = cap.read()
             if not ret:
-
                 if frame_count == 0:
-                    raise ValueError(
-                        "Video stream is empty or unreadable (moov atom not found)."
-                    )
+                    raise ValueError("Video stream is empty or unreadable.")
                 break
 
+            # Process every Nth frame
             if frame_count % VIDEO_FRAME_SKIP == 0:
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 pil_image = Image.fromarray(rgb_frame)
                 if is_image_nsfw(pil_image):
-                    return True
+                    return True  # Found NSFW content
 
             frame_count += 1
 
-        return False
+        return False  # Video is clean
 
     finally:
+        # Clean up resources
         if cap:
             cap.release()
         if temp_path and os.path.exists(temp_path):
