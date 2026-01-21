@@ -33,4 +33,6 @@ public interface AccountService {
   Account getAdminAccount();
 
   void resetAccountPassword(int accountId, String newPassword);
+
+  void updateFcmToken(String token);
 }

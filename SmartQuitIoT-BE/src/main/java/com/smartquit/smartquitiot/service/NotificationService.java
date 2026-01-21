@@ -43,4 +43,6 @@ public interface NotificationService {
   NotificationDTO sendSystemActivityNotification(String title, String content);
 
   Page<NotificationDTO> getSystemNotifications(int page, int size);
+
+  void sendPushNotification(String fcmToken, String title, String body);
 }

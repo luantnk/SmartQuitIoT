@@ -378,4 +378,13 @@ public class AccountServiceImpl implements AccountService {
     account.setPassword(passwordEncoder.encode(newPassword));
     accountRepository.save(account);
   }
+
+  @Override
+  @Transactional
+  public void updateFcmToken(String token) {
+    Account account = getAuthenticatedAccount();
+    Member member = account.getMember();
+    member.setFcmToken(token);
+    memberRepository.save(member);
+  }
 }

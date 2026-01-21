@@ -202,10 +202,12 @@ async def predict_quit_status(req: QuitPlanPredictRequest):
         input_name = sess.get_inputs()[0].name
         result = sess.run(None, {input_name: input_data})
         probs = result[1][0] if len(result) > 1 else result[0][0]
-        success_prob = (
-            probs.get(1, 0.0) if isinstance(probs, (dict, map)) else float(probs)
-        )
-
+        if isinstance(probs, (dict, map)):
+            success_prob = probs.get(1, 0.0)
+        elif hasattr(probs, "__len__") and len(probs) >= 2:
+            success_prob = float(probs[1])
+        else:
+            success_prob = float(probs)
         return {
             "success_probability": round(success_prob * 100, 2),
             "relapse_risk": round((1.0 - success_prob) * 100, 2),
@@ -216,8 +218,6 @@ async def predict_quit_status(req: QuitPlanPredictRequest):
     except Exception as e:
         print(f"[ERROR] Prediction Error: {e}")
         raise HTTPException(status_code=500, detail="Inference failed")
-
-
 @app.post("/check-content", tags=["Content Moderation"])
 async def api_check_text(req: TextCheckRequest):
     return {"isToxic": is_text_toxic(req.text), "type": "text"}

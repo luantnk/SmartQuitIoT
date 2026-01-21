@@ -265,4 +265,28 @@ public class NotificationServiceImpl implements NotificationService {
             NotificationType.SYSTEM, pageable);
     return notificationsPage.map(notificationMapper::mapToNotificationDTO);
   }
+
+  @Override
+  public void sendPushNotification(String fcmToken, String title, String body) {
+    com.google.firebase.messaging.Message message =
+        com.google.firebase.messaging.Message.builder()
+            .setToken(fcmToken)
+            .setNotification(
+                com.google.firebase.messaging.Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build())
+            .setAndroidConfig(
+                com.google.firebase.messaging.AndroidConfig.builder()
+                    .setPriority(com.google.firebase.messaging.AndroidConfig.Priority.HIGH)
+                    .build())
+            .build();
+
+    try {
+      String response = com.google.firebase.messaging.FirebaseMessaging.getInstance().send(message);
+      log.info("Successfully sent FCM message: " + response);
+    } catch (Exception e) {
+      log.error("FCM Error for token {}: ", fcmToken, e);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 package com.smartquit.smartquitiot.controller;
 
+import com.smartquit.smartquitiot.dto.request.FcmTestRequest;
 import com.smartquit.smartquitiot.dto.request.GetAllNotificationsRequest;
 import com.smartquit.smartquitiot.dto.response.NotificationDTO;
 import com.smartquit.smartquitiot.service.NotificationService;
@@ -106,5 +107,13 @@ public class NotificationsController {
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
     log.info("ADMIN ACCESS: Fetching system activity notifications - Page: {}", page);
     return ResponseEntity.ok(notificationService.getSystemNotifications(page, size));
+  }
+
+  @PostMapping("/test-fcm")
+  @Operation(summary = "Test FCM Push Notification manually")
+  public ResponseEntity<String> testFcm(@RequestBody FcmTestRequest request) {
+    notificationService.sendPushNotification(
+        request.getToken(), request.getTitle(), request.getBody());
+    return ResponseEntity.ok("Push notification request sent to Firebase");
   }
 }

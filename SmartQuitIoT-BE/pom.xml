@@ -89,6 +89,14 @@
             <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
 
+        <!-- Firebase FCM -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.7.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Hibernate JSON support -->
         <dependency>
             <groupId>com.vladmihalcea</groupId>

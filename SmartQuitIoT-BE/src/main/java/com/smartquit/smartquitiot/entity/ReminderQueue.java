@@ -35,4 +35,8 @@ public class ReminderQueue {
 
   @ManyToOne(fetch = FetchType.LAZY)
   PhaseDetail phaseDetail;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id")
+  Account account;
 }

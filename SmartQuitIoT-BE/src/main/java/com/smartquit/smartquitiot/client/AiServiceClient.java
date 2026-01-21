@@ -46,4 +46,7 @@ public interface AiServiceClient {
 
   @PostMapping("/predict-risk/dashboard")
   PredictRiskResponse getRiskPredictionDashboard(@RequestBody PredictRiskRequest request);
+
+  @PostMapping("/predict-risk/mobile")
+  PeakCravingResponse getPeakCravingPrediction(@RequestBody PredictRiskMobileRequest request);
 }

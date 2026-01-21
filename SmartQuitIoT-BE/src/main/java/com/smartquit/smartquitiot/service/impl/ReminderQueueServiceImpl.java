@@ -41,7 +41,7 @@ public class ReminderQueueServiceImpl implements ReminderQueueService {
   public void dispatchReminders() {
     LocalDateTime now = LocalDateTime.now();
 
-    log.info("REMINDER SCHEDULER RUNNING AT");
+    log.info("REMINDER SCHEDULER RUNNING AT: {}", now);
 
     List<ReminderQueue> dueReminders =
         reminderQueueRepository.findByStatusAndScheduledAtBefore(ReminderQueueStatus.PENDING, now);
@@ -66,21 +66,43 @@ public class ReminderQueueServiceImpl implements ReminderQueueService {
           continue;
         }
 
-        Member member = rq.getPhaseDetail().getPhase().getQuitPlan().getMember();
+        // --- REFACTORED FOR FCM SUPPORT ---
+        Member member = null;
 
-        notificationService.saveAndPublish(
-            member.getAccount(),
-            NotificationType.REMINDER,
-            "SmartQuit Reminder",
-            rq.getContent(),
-            null,
-            null,
-            "smartquit://reminder");
+        // Check if the reminder is linked via Account (AI Prediction) or PhaseDetail (Daily Tasks)
+        if (rq.getAccount() != null) {
+          member = rq.getAccount().getMember();
+        } else if (rq.getPhaseDetail() != null) {
+          member = rq.getPhaseDetail().getPhase().getQuitPlan().getMember();
+        }
+
+        if (member != null) {
+          // 1. Send Local Notification (for in-app notification list/history)
+          notificationService.saveAndPublish(
+              member.getAccount(),
+              NotificationType.REMINDER,
+              "SmartQuit Reminder",
+              rq.getContent(),
+              null,
+              null,
+              "smartquit://reminder");
+
+          // 2. Send Real-time FCM Push Notification (leveraging mobile FCM)
+          if (member.getFcmToken() != null && !member.getFcmToken().isEmpty()) {
+            log.info("Sending FCM push to member: {}", member.getId());
+            notificationService.sendPushNotification(
+                member.getFcmToken(), "SmartQuit Reminder", rq.getContent());
+          } else {
+            log.warn("Member {} has no FCM Token, skipping push.", member.getId());
+          }
+        }
+        // ----------------------------------
 
         rq.setStatus(ReminderQueueStatus.SENT);
         reminderQueueRepository.save(rq);
 
       } catch (Exception e) {
+        log.error("Error dispatching reminder ID: {}", rq.getId(), e);
         rq.setStatus(ReminderQueueStatus.CANCELLED);
         reminderQueueRepository.save(rq);
       }
@@ -138,6 +160,8 @@ public class ReminderQueueServiceImpl implements ReminderQueueService {
 
         ReminderQueue morningQueue = new ReminderQueue();
         morningQueue.setPhaseDetail(pd);
+        // Added Link to account for easier FCM lookup in scheduler
+        morningQueue.setAccount(member.getAccount());
         morningQueue.setReminderTemplate(morningChosen);
         morningQueue.setContent(morningChosen.getContent());
         morningQueue.setScheduledAt(morningScheduleAt);
@@ -174,6 +198,8 @@ public class ReminderQueueServiceImpl implements ReminderQueueService {
 
           ReminderQueue behaviorQueue = new ReminderQueue();
           behaviorQueue.setPhaseDetail(pd);
+          // Added Link to account for easier FCM lookup in scheduler
+          behaviorQueue.setAccount(member.getAccount());
           behaviorQueue.setReminderTemplate(behaviorChosen);
           behaviorQueue.setContent(behaviorChosen.getContent());
           behaviorQueue.setScheduledAt(behaviorScheduleAt);

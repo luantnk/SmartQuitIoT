@@ -109,4 +109,12 @@ public class AccountController {
     accountService.resetAccountPassword(accountId, request.getNewPassword());
     return ResponseEntity.ok(new MessageResponse("Account password has been reset successfully."));
   }
+
+  @PutMapping("/fcm-token")
+  @Operation(summary = "Update FCM Token for mobile push notifications")
+  @SecurityRequirement(name = "Bearer Authentication")
+  public ResponseEntity<MessageResponse> updateFcmToken(@RequestBody String token) {
+    accountService.updateFcmToken(token);
+    return ResponseEntity.ok(new MessageResponse("FCM Token updated successfully"));
+  }
 }

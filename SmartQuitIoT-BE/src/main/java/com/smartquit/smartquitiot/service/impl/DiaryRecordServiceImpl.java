@@ -16,6 +16,7 @@ import com.smartquit.smartquitiot.service.NotificationService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -275,6 +276,7 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
       metric.setSleepDuration(request.getSleepDuration());
     }
     metricRepository.save(metric);
+
     // calculate recovery time
     calculateRecoveryTime(
         calculateAge(member.getDob()), currentQuitPlan.getFtndScore(), request.getHaveSmoked());
@@ -293,6 +295,12 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
     AddAchievementRequest addAchievementRequestSteps = new AddAchievementRequest();
     addAchievementRequestSteps.setField("steps");
     memberAchievementService.addMemberAchievement(addAchievementRequestSteps).orElse(null);
+
+    try {
+      scheduleAiCravingAlert(member, diaryRecord, currentQuitPlan);
+    } catch (Exception e) {
+      log.error("Failed to schedule AI craving alert", e);
+    }
 
     try {
       analyzeAndNotify(diaryRecord, member);
@@ -1175,5 +1183,38 @@ public class DiaryRecordServiceImpl implements DiaryRecordService {
         null,
         "smartquit://diary");
     log.info("Sent AI Notification. Status: {}, Title: {}", statusColor, title);
+  }
+
+  private void scheduleAiCravingAlert(Member member, DiaryRecord record, QuitPlan plan) {
+    PredictRiskMobileRequest aiRequest =
+        PredictRiskMobileRequest.builder()
+            .age(calculateAge(member.getDob()))
+            .gender_code(member.getGender() == Gender.MALE ? 1 : 0)
+            .ftnd_score(plan.getFtndScore())
+            .smoke_avg_per_day(plan.getFormMetric().getSmokeAvgPerDay())
+            .mood_level(record.getMoodLevel())
+            .anxiety_level(record.getAnxietyLevel())
+            .day_of_week(LocalDate.now().getDayOfWeek().getValue())
+            .build();
+
+    PeakCravingResponse aiResponse = aiServiceClient.getPeakCravingPrediction(aiRequest);
+
+    if (aiResponse != null && aiResponse.getPeak_time() != null) {
+      LocalTime peakTime = LocalTime.parse(aiResponse.getPeak_time());
+      LocalDateTime scheduledTime = LocalDateTime.of(LocalDate.now(), peakTime);
+
+      if (scheduledTime.isBefore(LocalDateTime.now())) {
+        scheduledTime = scheduledTime.plusDays(1);
+      }
+
+      ReminderQueue task = new ReminderQueue();
+      task.setAccount(member.getAccount());
+      task.setContent(aiResponse.getMessage());
+      task.setScheduledAt(scheduledTime);
+      task.setStatus(ReminderQueueStatus.PENDING);
+
+      reminderQueueRepository.save(task);
+      log.info("Scheduled AI Alert for {} at {}", member.getLastName(), scheduledTime);
+    }
   }
 }

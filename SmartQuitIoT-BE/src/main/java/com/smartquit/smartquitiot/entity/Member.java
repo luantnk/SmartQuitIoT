@@ -59,6 +59,9 @@ public class Member {
   @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   Metric metric;
 
+  @Column(name = "fcm_token")
+  private String fcmToken;
+
   // default
   LocalTime morningReminderTime = LocalTime.of(7, 0); // 07:00
   LocalTime quietStart = LocalTime.of(22, 0); // 22:00

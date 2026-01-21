@@ -9,4 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ReminderQueueRepository extends JpaRepository<ReminderQueue, Integer> {
   List<ReminderQueue> findByStatusAndScheduledAtBefore(
       ReminderQueueStatus reminderQueueStatus, LocalDateTime now);
+
+  List<ReminderQueue> findAllByStatusAndScheduledAtBefore(
+      ReminderQueueStatus status, LocalDateTime now);
 }
