@@ -59,6 +59,7 @@ public class Member {
   @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   Metric metric;
 
+  // New token from FCM
   @Column(name = "fcm_token")
   private String fcmToken;
 
