@@ -34,7 +34,7 @@ jobs:
         run: ./mvnw spotless:apply
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "style: auto-format java code with spotless"
           file_pattern: 'SmartQuitIoT-BE/src/**/*.java'
